@@ -30,7 +30,7 @@ public class AuthService {
     @Transactional
     public UserInfo register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
+            throw new IllegalArgumentException("Email already registered");
         }
 
         User user = new User();
