@@ -96,17 +96,17 @@ const ChatPage = () => {
 
         const lines = content.split('\n');
         return (
-            <div className="space-y-2 text-sm sm:text-base leading-relaxed text-slate-800">
+            <div className="space-y-2 text-xs sm:text-sm leading-relaxed text-slate-800">
                 {lines.map((line, idx) => {
                     const trimmed = line.trim();
 
                     // Header 3
                     if (trimmed.startsWith('### ')) {
-                        return <h4 key={idx} className="font-bold text-base sm:text-lg text-[#0F172A] mt-2 mb-1">{trimmed.replace('### ', '')}</h4>;
+                        return <h4 key={idx} className="font-bold text-sm sm:text-base text-[#0F172A] mt-2 mb-1">{trimmed.replace('### ', '')}</h4>;
                     }
                     // Header 2
                     if (trimmed.startsWith('## ')) {
-                        return <h3 key={idx} className="font-bold text-lg text-[#0F172A] mt-2 mb-1">{trimmed.replace('## ', '')}</h3>;
+                        return <h3 key={idx} className="font-bold text-base text-[#0F172A] mt-2 mb-1">{trimmed.replace('## ', '')}</h3>;
                     }
                     // Bullet point
                     if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
@@ -131,7 +131,7 @@ const ChatPage = () => {
                         if (trimmed.includes('---')) return null;
                         const cells = trimmed.split('|').filter(c => c.trim().length > 0);
                         return (
-                            <div key={idx} className="grid grid-cols-4 sm:grid-cols-5 gap-2 bg-slate-50 p-2.5 rounded border border-slate-200 text-xs sm:text-sm font-medium text-slate-700">
+                            <div key={idx} className="grid grid-cols-4 sm:grid-cols-5 gap-1 bg-slate-50 p-2 rounded border border-slate-200 text-[11px] font-medium text-slate-700">
                                 {cells.map((cell, cIdx) => (
                                     <div key={cIdx} className="truncate" dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(cell.trim()) }} />
                                 ))}
@@ -153,29 +153,29 @@ const ChatPage = () => {
         return text
             .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-bold">$1</strong>')
             .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code class="bg-slate-100 text-slate-800 px-1 py-0.5 rounded text-xs sm:text-sm border border-slate-300">$1</code>');
+            .replace(/`(.*?)`/g, '<code class="bg-slate-100 text-slate-800 px-1 py-0.5 rounded text-xs border border-slate-300">$1</code>');
     };
 
     return (
         <div className="min-h-screen bg-[#F8FAFC]">
             {/* Header Banner */}
-            <div className="bg-[#1C355E] text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-[#15294A]">
+            <div className="bg-[#1C355E] text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-[#15294A]">
                 <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <div className="text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider">
+                        <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
                             Retrieval-Augmented Clinical Intelligence
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-bold text-white mt-1">
+                        <h1 className="text-xl sm:text-2xl font-bold text-white mt-0.5">
                             Clinical AI Consultation Assistant
                         </h1>
-                        <p className="text-xs sm:text-sm text-slate-200 mt-1">
+                        <p className="text-xs text-slate-200 mt-0.5">
                             Cross-modal semantic reasoning over laboratory, radiology, pathology, and clinical records
                         </p>
                     </div>
 
                     <button
                         onClick={handleClearChat}
-                        className="text-xs sm:text-sm text-slate-200 hover:text-white font-medium px-4 py-2 rounded border border-white/30 hover:bg-white/10 transition cursor-pointer self-start sm:self-center"
+                        className="text-xs text-slate-200 hover:text-white font-medium px-3 py-1.5 rounded border border-white/30 hover:bg-white/10 transition cursor-pointer self-start sm:self-center"
                     >
                         Reset Transcript
                     </button>
@@ -185,13 +185,13 @@ const ChatPage = () => {
             {/* Chat Workspace */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-4">
                 {/* Suggested Inquiries Chips */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-sm">
-                    <span className="font-semibold text-slate-700 shrink-0">Sample Inquiries:</span>
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                    <span className="font-semibold text-slate-500 shrink-0">Sample Inquiries:</span>
                     {SUGGESTED_PROMPTS.map((prompt, idx) => (
                         <button
                             key={idx}
                             onClick={() => handleSend(prompt)}
-                            className="bg-white hover:bg-slate-100 text-slate-700 font-medium px-3.5 py-1.5 rounded border border-slate-300 shadow-2xs transition whitespace-nowrap shrink-0 cursor-pointer"
+                            className="bg-white hover:bg-slate-100 text-slate-700 font-medium px-3 py-1.5 rounded border border-slate-300 shadow-2xs transition whitespace-nowrap shrink-0 cursor-pointer"
                         >
                             {prompt}
                         </button>
@@ -206,7 +206,7 @@ const ChatPage = () => {
                             return (
                                 <div key={index} className={`flex ${isAssistant ? 'justify-start' : 'justify-end'} animate-fade-in`}>
                                     <div
-                                        className={`max-w-[90%] sm:max-w-[80%] rounded p-5 border ${
+                                        className={`max-w-[90%] sm:max-w-[80%] rounded p-4 sm:p-5 border ${
                                             isAssistant
                                                 ? 'bg-white text-slate-800 border-slate-300 shadow-2xs'
                                                 : 'bg-[#1C355E] text-white border-[#15294A] shadow-xs'
@@ -215,7 +215,7 @@ const ChatPage = () => {
                                         {isAssistant ? (
                                             renderFormattedText(m.text)
                                         ) : (
-                                            <p className="text-sm sm:text-base font-medium whitespace-pre-line leading-relaxed">
+                                            <p className="text-xs sm:text-sm font-medium whitespace-pre-line leading-relaxed">
                                                 {m.text}
                                             </p>
                                         )}
@@ -223,23 +223,23 @@ const ChatPage = () => {
                                         {/* Source citations */}
                                         {isAssistant && m.sources && m.sources.length > 0 && (
                                             <div className="mt-4 pt-3 border-t border-slate-200">
-                                                <div className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                                                <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
                                                     Clinical Evidence Citations ({m.sources.length}):
                                                 </div>
-                                                <div className="grid sm:grid-cols-2 gap-2.5">
+                                                <div className="grid sm:grid-cols-2 gap-2">
                                                     {m.sources.map((src, sIdx) => (
                                                         <div
                                                             key={sIdx}
-                                                            className="bg-slate-50 border border-slate-300 rounded p-3 text-xs sm:text-sm text-slate-700 space-y-1"
+                                                            className="bg-slate-50 border border-slate-300 rounded p-2.5 text-[11px] text-slate-700 space-y-1"
                                                         >
-                                                            <div className="font-bold text-[#0F172A] flex items-center justify-between text-sm">
+                                                            <div className="font-bold text-[#0F172A] flex items-center justify-between">
                                                                 <span>{formatName(src.reportType)}</span>
-                                                                <span className="text-xs text-slate-400 font-normal">Record #{src.reportId}</span>
+                                                                <span className="text-[10px] text-slate-400 font-normal">Record #{src.reportId}</span>
                                                             </div>
-                                                            <div className="text-xs text-slate-500">
+                                                            <div className="text-[10px] text-slate-500">
                                                                 Dated: {new Date(src.uploadedAt).toLocaleDateString()}
                                                             </div>
-                                                            <div className="text-slate-600 italic line-clamp-2 text-xs bg-white p-2 rounded border border-slate-200">
+                                                            <div className="text-slate-600 italic line-clamp-2 text-[10px] bg-white p-1.5 rounded border border-slate-200">
                                                                 "{src.snippet}"
                                                             </div>
                                                         </div>
@@ -255,8 +255,8 @@ const ChatPage = () => {
                         {loading && (
                             <div className="flex justify-start animate-fade-in">
                                 <div className="bg-white rounded p-4 border border-slate-300 flex items-center space-x-3 shadow-2xs">
-                                    <div className="w-5 h-5 border-2 border-[#1C355E] border-t-transparent rounded-full animate-spin"></div>
-                                    <span className="text-sm text-slate-600 font-medium">Cross-referencing clinical documents...</span>
+                                    <div className="w-4 h-4 border-2 border-[#1C355E] border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="text-xs text-slate-600 font-medium">Cross-referencing clinical documents...</span>
                                 </div>
                             </div>
                         )}
@@ -264,19 +264,19 @@ const ChatPage = () => {
                     </div>
 
                     {/* Input Bar */}
-                    <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-4 bg-white border-t border-slate-200 flex gap-2">
+                    <form onSubmit={(e) => { e.preventDefault(); handleSend(); }} className="p-3 sm:p-4 bg-white border-t border-slate-200 flex gap-2">
                         <input
                             type="text"
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             placeholder="Type a clinical question (e.g. review chest X-ray findings, explain biopsy, list medications)..."
-                            className="flex-1 border border-slate-300 rounded px-4 py-3 text-sm sm:text-base bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                            className="flex-1 border border-slate-300 rounded px-4 py-2.5 text-xs sm:text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                             disabled={loading}
                         />
                         <button
                             type="submit"
                             disabled={loading || !input.trim()}
-                            className={`px-6 py-3 rounded font-semibold text-sm sm:text-base text-white transition flex items-center gap-1.5 cursor-pointer ${
+                            className={`px-5 py-2.5 rounded font-semibold text-xs sm:text-sm text-white transition flex items-center gap-1.5 cursor-pointer ${
                                 loading || !input.trim()
                                     ? 'bg-slate-300 cursor-not-allowed'
                                     : 'bg-[#1C355E] hover:bg-[#15294A]'

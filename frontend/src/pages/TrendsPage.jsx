@@ -153,13 +153,13 @@ const TrendsPage = () => {
             {/* Header Banner */}
             <div className="bg-[#1C355E] text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-[#15294A]">
                 <div className="max-w-7xl mx-auto">
-                    <div className="text-xs sm:text-sm font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                    <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
                         Longitudinal Clinical Analytics
                     </div>
-                    <h1 className="text-2xl sm:text-3.5xl font-bold tracking-tight text-white">
+                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
                         Biomarker Trends & Reference Trajectories
                     </h1>
-                    <p className="text-sm sm:text-base text-slate-200 mt-1 max-w-2xl leading-relaxed">
+                    <p className="text-sm text-slate-200 mt-1 max-w-2xl">
                         Time-series plotting of physiological biomarkers against clinical reference standards
                     </p>
                 </div>
@@ -171,13 +171,13 @@ const TrendsPage = () => {
                     {/* Controls */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
                         <div className="w-full md:w-96">
-                            <label className="block text-slate-700 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2">
+                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-2">
                                 Select Biomarker Parameter
                             </label>
                             <select
                                 value={selectedParam}
                                 onChange={e => setSelectedParam(e.target.value)}
-                                className="w-full border border-slate-300 rounded px-3.5 py-2.5 text-sm sm:text-base font-semibold bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm font-semibold bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                             >
                                 {PARAMETER_GROUPS.map(grp => (
                                     <optgroup key={grp.group} label={grp.group}>
@@ -189,9 +189,9 @@ const TrendsPage = () => {
                             </select>
                         </div>
 
-                        <div className="flex items-center gap-3 self-start md:self-end text-sm font-medium text-slate-700 bg-slate-50 px-4 py-2.5 rounded border border-slate-300">
+                        <div className="flex items-center gap-3 self-start md:self-end text-xs font-medium text-slate-700 bg-slate-50 px-3.5 py-2 rounded border border-slate-300">
                             <span className="font-semibold text-slate-900">Standard Clinical Range:</span>
-                            <strong className="text-[#1C355E] text-sm sm:text-base">{activeConfig.normalRange}</strong>
+                            <strong className="text-[#1C355E]">{activeConfig.normalRange}</strong>
                         </div>
                     </div>
 
@@ -199,24 +199,24 @@ const TrendsPage = () => {
                     {stats && (
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             <div className="bg-slate-50 rounded p-4 border border-slate-200">
-                                <div className="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider">Latest Measurement</div>
-                                <div className="text-xl sm:text-2xl font-bold text-[#0F172A] mt-1">{stats.latestText}</div>
+                                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">Latest Measurement</div>
+                                <div className="text-xl font-bold text-[#0F172A] mt-1">{stats.latestText}</div>
                             </div>
 
                             <div className="bg-slate-50 rounded p-4 border border-slate-200">
-                                <div className="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider">Prior Baseline</div>
-                                <div className="text-xl sm:text-2xl font-bold text-slate-700 mt-1">{stats.previousText}</div>
+                                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">Prior Baseline</div>
+                                <div className="text-xl font-bold text-slate-700 mt-1">{stats.previousText}</div>
                             </div>
 
                             <div className="bg-slate-50 rounded p-4 border border-slate-200">
-                                <div className="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider">Shift Magnitude</div>
-                                <div className="text-xl sm:text-2xl font-bold text-[#0F172A] mt-1">{stats.deltaText}</div>
+                                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">Shift Magnitude</div>
+                                <div className="text-xl font-bold text-[#0F172A] mt-1">{stats.deltaText}</div>
                             </div>
 
                             <div className="bg-slate-50 rounded p-4 border border-slate-200">
-                                <div className="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wider">Clinical Status</div>
+                                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider">Clinical Status</div>
                                 <div className="mt-1">
-                                    <span className={`text-xs sm:text-sm font-semibold px-3 py-1 rounded border inline-block ${
+                                    <span className={`text-xs font-semibold px-2.5 py-1 rounded border inline-block ${
                                         stats.isElevated
                                             ? 'bg-amber-50 text-amber-900 border-amber-300'
                                             : stats.isBelow
@@ -235,28 +235,28 @@ const TrendsPage = () => {
                         {loading ? (
                             <div className="h-96 flex flex-col items-center justify-center space-y-4">
                                 <div className="w-8 h-8 border-3 border-[#1C355E] border-t-transparent rounded-full animate-spin"></div>
-                                <span className="text-slate-600 font-medium text-sm sm:text-base">Rendering time-series chart...</span>
+                                <span className="text-slate-600 font-medium text-sm">Rendering time-series chart...</span>
                             </div>
                         ) : errorMsg ? (
                             <div className="h-96 flex items-center justify-center bg-slate-50 rounded border border-dashed border-slate-300 p-8 text-center text-slate-500">
                                 <div>
-                                    <p className="text-base font-semibold text-slate-700">{errorMsg}</p>
-                                    <p className="text-xs sm:text-sm text-slate-400 mt-1">Upload additional laboratory documents to establish continuous trend curves.</p>
+                                    <p className="text-sm font-semibold text-slate-700">{errorMsg}</p>
+                                    <p className="text-xs text-slate-400 mt-1">Upload additional laboratory documents to establish continuous trend curves.</p>
                                 </div>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                                    <h3 className="text-base font-bold text-[#0F172A] uppercase tracking-wider">
+                                    <h3 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
                                         {activeConfig.label} Time-Series Plot
                                     </h3>
-                                    <div className="text-xs sm:text-sm text-slate-500 flex items-center gap-2">
-                                        <span className="w-3.5 h-3.5 bg-emerald-50 border border-emerald-500 rounded"></span>
+                                    <div className="text-xs text-slate-500 flex items-center gap-2">
+                                        <span className="w-3 h-3 bg-emerald-50 border border-emerald-500 rounded"></span>
                                         <span>Shaded Band = Normal Reference Standard</span>
                                     </div>
                                 </div>
 
-                                <div className="h-[400px] w-full pt-2">
+                                <div className="h-[380px] w-full pt-2">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <LineChart
                                             data={chartData}
@@ -265,12 +265,12 @@ const TrendsPage = () => {
                                             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                                             <XAxis
                                                 dataKey="formattedDate"
-                                                tick={{ fill: '#475569', fontSize: 13, fontWeight: 500 }}
+                                                tick={{ fill: '#475569', fontSize: 12, fontWeight: 500 }}
                                                 tickLine={false}
                                                 axisLine={{ stroke: '#cbd5e1' }}
                                             />
                                             <YAxis
-                                                tick={{ fill: '#475569', fontSize: 13, fontWeight: 500 }}
+                                                tick={{ fill: '#475569', fontSize: 12, fontWeight: 500 }}
                                                 tickLine={false}
                                                 axisLine={{ stroke: '#cbd5e1' }}
                                                 domain={['auto', 'auto']}
@@ -281,7 +281,7 @@ const TrendsPage = () => {
                                                     borderRadius: '4px',
                                                     border: '1px solid #94a3b8',
                                                     boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)',
-                                                    fontSize: '13px',
+                                                    fontSize: '12px',
                                                     fontWeight: 500
                                                 }}
                                             />
@@ -301,16 +301,16 @@ const TrendsPage = () => {
 
                                             {selectedParam === 'BP_COMBINED' ? (
                                                 <>
-                                                    <ReferenceLine y={120} stroke="#d97706" strokeDasharray="4 4" label={{ value: 'Systolic Limit (120)', position: 'insideTopRight', fill: '#92400e', fontSize: 11 }} />
-                                                    <ReferenceLine y={80} stroke="#d97706" strokeDasharray="4 4" label={{ value: 'Diastolic Limit (80)', position: 'insideTopRight', fill: '#92400e', fontSize: 11 }} />
+                                                    <ReferenceLine y={120} stroke="#d97706" strokeDasharray="4 4" label={{ value: 'Systolic Limit (120)', position: 'insideTopRight', fill: '#92400e', fontSize: 10 }} />
+                                                    <ReferenceLine y={80} stroke="#d97706" strokeDasharray="4 4" label={{ value: 'Diastolic Limit (80)', position: 'insideTopRight', fill: '#92400e', fontSize: 10 }} />
                                                     <Line
                                                         type="monotone"
                                                         dataKey="systolic"
                                                         name="Systolic BP (mmHg)"
                                                         stroke="#1C355E"
                                                         strokeWidth={2.5}
-                                                        activeDot={{ r: 7, stroke: '#0F172A', strokeWidth: 2 }}
-                                                        dot={{ stroke: '#1C355E', strokeWidth: 2, r: 5, fill: '#ffffff' }}
+                                                        activeDot={{ r: 6, stroke: '#0F172A', strokeWidth: 2 }}
+                                                        dot={{ stroke: '#1C355E', strokeWidth: 2, r: 4, fill: '#ffffff' }}
                                                     />
                                                     <Line
                                                         type="monotone"
@@ -318,8 +318,8 @@ const TrendsPage = () => {
                                                         name="Diastolic BP (mmHg)"
                                                         stroke="#026CB6"
                                                         strokeWidth={2.5}
-                                                        activeDot={{ r: 7, stroke: '#004A80', strokeWidth: 2 }}
-                                                        dot={{ stroke: '#026CB6', strokeWidth: 2, r: 5, fill: '#ffffff' }}
+                                                        activeDot={{ r: 6, stroke: '#004A80', strokeWidth: 2 }}
+                                                        dot={{ stroke: '#026CB6', strokeWidth: 2, r: 4, fill: '#ffffff' }}
                                                     />
                                                 </>
                                             ) : (
@@ -329,8 +329,8 @@ const TrendsPage = () => {
                                                     name={`${activeConfig.label} (${activeConfig.unit})`}
                                                     stroke="#1C355E"
                                                     strokeWidth={2.5}
-                                                    activeDot={{ r: 7, stroke: '#0F172A', strokeWidth: 2 }}
-                                                    dot={{ stroke: '#1C355E', strokeWidth: 2, r: 5, fill: '#ffffff' }}
+                                                    activeDot={{ r: 6, stroke: '#0F172A', strokeWidth: 2 }}
+                                                    dot={{ stroke: '#1C355E', strokeWidth: 2, r: 4, fill: '#ffffff' }}
                                                 />
                                             )}
                                         </LineChart>
