@@ -34,34 +34,23 @@ const Register = () => {
     };
 
     return (
-        <div className="relative min-h-[calc(100vh-64px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 overflow-hidden bg-slate-900">
-            {/* High-definition Hospital Architectural Background with Overlay */}
-            <div 
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-25 filter scale-105"
-                style={{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=2000&q=80')`
-                }}
-            ></div>
-
-            {/* Deep Navy Gradient Vignette */}
-            <div className="absolute inset-0 z-0 bg-gradient-to-tr from-[#0A192F] via-[#102A4E]/90 to-[#0F294A]/80 backdrop-blur-[1.5px]"></div>
-
+        <div 
+            className="relative min-h-[calc(100vh-64px)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-900 bg-cover bg-center bg-no-repeat"
+            style={{
+                backgroundImage: `linear-gradient(135deg, rgba(15, 35, 68, 0.82) 0%, rgba(10, 25, 47, 0.78) 100%), url('https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?auto=format&fit=crop&w=2000&q=80')`
+            }}
+        >
             {/* Centered Main Split Card */}
-            <div className="relative z-10 max-w-4xl w-full grid md:grid-cols-12 rounded-2xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-md">
+            <div className="relative z-10 max-w-4xl w-full grid md:grid-cols-12 rounded-xl overflow-hidden shadow-2xl border border-white/30 backdrop-blur-md">
                 {/* Left Panel: Deep Navy Medical Principles */}
-                <div className="md:col-span-5 bg-gradient-to-br from-[#1C355E] to-[#0E2344] text-white p-8 sm:p-9 flex flex-col justify-between space-y-6 relative">
-                    {/* Watermark Medical Cross */}
-                    <div className="absolute -right-8 -bottom-8 w-40 h-40 text-white/5 pointer-events-none select-none text-9xl font-bold flex items-center justify-center">
-                        +
-                    </div>
-
+                <div className="md:col-span-5 bg-[#1C355E]/95 text-white p-8 sm:p-9 flex flex-col justify-between space-y-6 relative border-r border-white/10">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-white text-[#1C355E] flex items-center justify-center font-extrabold text-lg shadow-sm">
+                            <div className="w-8 h-8 rounded bg-white text-[#1C355E] flex items-center justify-center font-bold text-lg shadow-sm">
                                 +
                             </div>
                             <div>
-                                <span className="font-bold text-xs tracking-wider uppercase text-blue-200 block leading-tight">
+                                <span className="font-bold text-xs tracking-wider uppercase text-slate-200 block leading-tight">
                                     Patient Portal
                                 </span>
                                 <span className="text-[10px] text-slate-300">
@@ -74,47 +63,47 @@ const Register = () => {
                             <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug">
                                 Unified Longitudinal Health Dossier
                             </h2>
-                            <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-                                Join your laboratory reports, imaging scans, and pathology evaluations in one place.
+                            <p className="text-xs text-slate-200 mt-1 leading-relaxed">
+                                Connect laboratory reports, imaging scans, and pathology evaluations in one place.
                             </p>
                         </div>
                     </div>
 
-                    {/* Creative Quote Card */}
-                    <div className="bg-white/10 hover:bg-white/15 backdrop-blur-sm p-4 rounded-xl border border-white/15 transition duration-300 space-y-2">
-                        <p className="text-xs italic text-slate-100 leading-relaxed">
-                            "Health is a state of complete physical, mental, and social well-being and not merely the absence of disease."
-                        </p>
-                        <div className="flex items-center justify-between text-[11px] text-blue-200 font-semibold pt-1">
-                            <span>— World Health Organization</span>
-                            <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded text-slate-200">WHO Charter</span>
+                    {/* Medical Quote Card */}
+                    <div className="space-y-3.5 border-y border-white/15 py-4">
+                        <div className="bg-white/10 p-4 rounded border border-white/10 space-y-1.5">
+                            <p className="text-xs italic text-slate-100 leading-relaxed">
+                                "Health is a state of complete physical, mental, and social well-being and not merely the absence of disease."
+                            </p>
+                            <div className="text-[11px] text-blue-200 font-semibold pt-0.5">
+                                — World Health Organization (WHO)
+                            </div>
                         </div>
                     </div>
 
-                    {/* Security & Isolation Footnote */}
-                    <div className="pt-2 border-t border-white/15 text-[11px] text-slate-300 space-y-1">
+                    {/* Privacy notice */}
+                    <div className="text-xs text-slate-300 space-y-1">
                         <div className="font-semibold text-white flex items-center gap-1.5">
-                            <span className="text-emerald-400">🛡️</span>
-                            <span>Patient Data Privacy & Security</span>
+                            <span>🛡️</span>
+                            <span>Patient Data Protection</span>
                         </div>
-                        <p className="text-[10px] text-slate-400 leading-relaxed">
-                            Cryptographically signed tokens and isolated tenant medical vaults.
+                        <p className="text-[11px] text-slate-300 leading-relaxed">
+                            Encrypted 256-bit authentication and strict patient-isolated clinical indexing.
                         </p>
                     </div>
                 </div>
 
                 {/* Right Panel: Registration Form */}
-                <div className="md:col-span-7 bg-white/95 backdrop-blur-lg p-8 sm:p-10 flex flex-col justify-center space-y-5">
+                <div className="md:col-span-7 bg-white p-8 sm:p-10 flex flex-col justify-center space-y-5">
                     <div>
-                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1C355E] uppercase tracking-wider bg-blue-50 border border-blue-200/60 px-2.5 py-1 rounded-full mb-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#1C355E]"></span>
-                            <span>New Patient Enrollment</span>
+                        <div className="text-xs font-bold text-[#1C355E] uppercase tracking-wider mb-1">
+                            New Account Creation
                         </div>
                         <h1 className="text-2xl font-bold tracking-tight text-[#0F172A]">
-                            Create Health Profile
+                            Create Patient Profile
                         </h1>
-                        <p className="text-xs text-slate-500 mt-1">
-                            Register your account to begin optical document ingestion
+                        <p className="text-xs text-slate-500 mt-0.5">
+                            Register your credentials to start uploading clinical documents
                         </p>
                     </div>
 
@@ -126,7 +115,7 @@ const Register = () => {
 
                     <form className="space-y-3.5" onSubmit={handleSubmit}>
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                                 Full Name
                             </label>
                             <input
@@ -134,13 +123,13 @@ const Register = () => {
                                 required
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C355E] focus:border-transparent transition shadow-2xs"
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                 placeholder="Alex Morgan"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                                 Email Address
                             </label>
                             <input
@@ -148,14 +137,14 @@ const Register = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C355E] focus:border-transparent transition shadow-2xs"
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                 placeholder="patient@example.com"
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                                     Password
                                 </label>
                                 <input
@@ -163,12 +152,12 @@ const Register = () => {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C355E] focus:border-transparent transition shadow-2xs"
+                                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                     placeholder="••••••••"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
                                     Confirm
                                 </label>
                                 <input
@@ -176,7 +165,7 @@ const Register = () => {
                                     required
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1C355E] focus:border-transparent transition shadow-2xs"
+                                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -185,11 +174,11 @@ const Register = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full py-2.5 text-white font-semibold rounded-lg text-sm transition cursor-pointer shadow-sm ${
-                                loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-[#1C355E] hover:bg-[#15294A] active:scale-[0.99]'
+                            className={`w-full py-2.5 text-white font-semibold rounded text-sm transition cursor-pointer shadow-xs ${
+                                loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-[#1C355E] hover:bg-[#15294A]'
                             }`}
                         >
-                            {loading ? 'Creating Profile...' : 'Complete Registration'}
+                            {loading ? 'Creating Record...' : 'Complete Registration'}
                         </button>
                     </form>
 
@@ -197,7 +186,7 @@ const Register = () => {
                         <button
                             type="button"
                             onClick={() => { loginAsDemo(); navigate('/patient/dashboard'); }}
-                            className="w-full py-2 text-[#1C355E] bg-blue-50/70 hover:bg-blue-100/80 font-bold rounded-lg text-xs border border-blue-200 transition cursor-pointer flex items-center justify-center gap-1.5"
+                            className="w-full py-2 text-[#1C355E] bg-blue-50/80 hover:bg-blue-100 font-bold rounded text-xs border border-blue-200 transition cursor-pointer flex items-center justify-center gap-1.5"
                         >
                             <span>⚡</span>
                             <span>Enter 1-Click Interactive Clinical Demo</span>
@@ -206,7 +195,7 @@ const Register = () => {
 
                     <div className="text-center pt-1 border-t border-slate-100">
                         <p className="text-xs text-slate-600">
-                            Already have an active patient record?{' '}
+                            Already registered?{' '}
                             <Link to="/login" className="font-semibold text-[#026CB6] hover:underline">
                                 Sign in
                             </Link>
