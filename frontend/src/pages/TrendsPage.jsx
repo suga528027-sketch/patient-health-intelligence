@@ -13,18 +13,40 @@ import {
     ReferenceLine 
 } from 'recharts';
 
-const PARAMETERS = [
-    { value: 'BP_COMBINED', label: '🩺 Combined Blood Pressure (Systolic + Diastolic)', unit: 'mmHg', normalRange: '90-120 / 60-80' },
-    { value: 'BP_SYSTOLIC', label: 'Systolic Blood Pressure', unit: 'mmHg', normalMin: 90, normalMax: 120, normalRange: '90–120 mmHg' },
-    { value: 'BP_DIASTOLIC', label: 'Diastolic Blood Pressure', unit: 'mmHg', normalMin: 60, normalMax: 80, normalRange: '60–80 mmHg' },
-    { value: 'GLUCOSE_FASTING', label: '🩸 Fasting Blood Glucose', unit: 'mg/dL', normalMin: 70, normalMax: 100, normalRange: '70–100 mg/dL' },
-    { value: 'HBA1C', label: '🧪 HbA1c (Glycated Hemoglobin)', unit: '%', normalMin: 4.0, normalMax: 5.7, normalRange: '< 5.7 %' },
-    { value: 'HEMOGLOBIN', label: '🩸 Hemoglobin', unit: 'g/dL', normalMin: 12.0, normalMax: 16.0, normalRange: '12.0–16.0 g/dL' },
-    { value: 'CHOLESTEROL_TOTAL', label: '🫀 Total Cholesterol', unit: 'mg/dL', normalMin: 120, normalMax: 200, normalRange: '< 200 mg/dL' },
-    { value: 'LDL', label: '🫀 LDL ("Bad") Cholesterol', unit: 'mg/dL', normalMin: 50, normalMax: 100, normalRange: '< 100 mg/dL' },
-    { value: 'HDL', label: '🫀 HDL ("Good") Cholesterol', unit: 'mg/dL', normalMin: 40, normalMax: 80, normalRange: '> 40 mg/dL' },
-    { value: 'CREATININE', label: '🧪 Serum Creatinine (Kidney)', unit: 'mg/dL', normalMin: 0.6, normalMax: 1.2, normalRange: '0.6–1.2 mg/dL' }
+const PARAMETER_GROUPS = [
+    {
+        group: "Cardiovascular & Vitals",
+        items: [
+            { value: 'BP_COMBINED', label: '🩺 Combined Blood Pressure (Systolic + Diastolic)', unit: 'mmHg', normalRange: '90-120 / 60-80' },
+            { value: 'BP_SYSTOLIC', label: 'Systolic Blood Pressure', unit: 'mmHg', normalMin: 90, normalMax: 120, normalRange: '90–120 mmHg' },
+            { value: 'BP_DIASTOLIC', label: 'Diastolic Blood Pressure', unit: 'mmHg', normalMin: 60, normalMax: 80, normalRange: '60–80 mmHg' }
+        ]
+    },
+    {
+        group: "Glycemic & Metabolic",
+        items: [
+            { value: 'GLUCOSE_FASTING', label: '🩸 Fasting Blood Glucose', unit: 'mg/dL', normalMin: 70, normalMax: 100, normalRange: '70–100 mg/dL' },
+            { value: 'HBA1C', label: '🧪 HbA1c (Glycated Hemoglobin)', unit: '%', normalMin: 4.0, normalMax: 5.7, normalRange: '< 5.7 %' }
+        ]
+    },
+    {
+        group: "Lipid Profile & Cholesterol",
+        items: [
+            { value: 'CHOLESTEROL_TOTAL', label: '🫀 Total Cholesterol', unit: 'mg/dL', normalMin: 120, normalMax: 200, normalRange: '< 200 mg/dL' },
+            { value: 'LDL', label: '🫀 LDL ("Bad") Cholesterol', unit: 'mg/dL', normalMin: 50, normalMax: 100, normalRange: '< 100 mg/dL' },
+            { value: 'HDL', label: '🫀 HDL ("Good") Cholesterol', unit: 'mg/dL', normalMin: 40, normalMax: 80, normalRange: '> 40 mg/dL' }
+        ]
+    },
+    {
+        group: "Renal, Hepatic & Hematology",
+        items: [
+            { value: 'CREATININE', label: '🧪 Serum Creatinine (Kidney)', unit: 'mg/dL', normalMin: 0.6, normalMax: 1.2, normalRange: '0.6–1.2 mg/dL' },
+            { value: 'HEMOGLOBIN', label: '🩸 Hemoglobin', unit: 'g/dL', normalMin: 12.0, normalMax: 16.0, normalRange: '12.0–16.0 g/dL' }
+        ]
+    }
 ];
+
+const ALL_PARAMETERS = PARAMETER_GROUPS.flatMap(g => g.items);
 
 const TrendsPage = () => {
     const [selectedParam, setSelectedParam] = useState('BP_COMBINED');
@@ -32,7 +54,7 @@ const TrendsPage = () => {
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
-    const activeConfig = PARAMETERS.find(p => p.value === selectedParam) || PARAMETERS[0];
+    const activeConfig = ALL_PARAMETERS.find(p => p.value === selectedParam) || ALL_PARAMETERS[0];
 
     const fetchTrendData = async (paramKey) => {
         setLoading(true);
@@ -87,7 +109,6 @@ const TrendsPage = () => {
         fetchTrendData(selectedParam);
     }, [selectedParam]);
 
-    // Calculate Summary Statistics
     const getStats = () => {
         if (!chartData || chartData.length === 0) return null;
 
@@ -154,8 +175,12 @@ const TrendsPage = () => {
                             onChange={e => setSelectedParam(e.target.value)}
                             className="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-xs sm:text-sm font-semibold bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                         >
-                            {PARAMETERS.map(p => (
-                                <option key={p.value} value={p.value}>{p.label}</option>
+                            {PARAMETER_GROUPS.map(grp => (
+                                <optgroup key={grp.group} label={grp.group}>
+                                    {grp.items.map(p => (
+                                        <option key={p.value} value={p.value}>{p.label}</option>
+                                    ))}
+                                </optgroup>
                             ))}
                         </select>
                     </div>

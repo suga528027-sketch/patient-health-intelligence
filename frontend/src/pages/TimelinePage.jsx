@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { reportService } from '../services/api';
+import { REPORT_CATEGORIES } from '../data/mockHealthData';
 import { Link } from 'react-router-dom';
 
 const TimelinePage = () => {
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filterQuery, setFilterQuery] = useState('');
-    const [selectedType, setSelectedType] = useState('ALL');
+    const [selectedCategory, setSelectedCategory] = useState('ALL');
 
     useEffect(() => {
         const fetchTimeline = async () => {
@@ -22,11 +23,15 @@ const TimelinePage = () => {
         fetchTimeline();
     }, []);
 
+    const getCategoryObj = (catId) => {
+        return REPORT_CATEGORIES.find(c => c.id === catId) || REPORT_CATEGORIES[3];
+    };
+
     const filteredItems = items.filter(item => {
         const matchesQuery = item.title.toLowerCase().includes(filterQuery.toLowerCase()) ||
             item.description.toLowerCase().includes(filterQuery.toLowerCase());
-        const matchesType = selectedType === 'ALL' || item.type === selectedType;
-        return matchesQuery && matchesType;
+        const matchesCat = selectedCategory === 'ALL' || item.category === selectedCategory;
+        return matchesQuery && matchesCat;
     });
 
     if (loading) {
@@ -43,13 +48,13 @@ const TimelinePage = () => {
             {/* Header */}
             <div>
                 <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold mb-2">
-                    <span>📅 Patient Medical History</span>
+                    <span>📅 Multi-Domain Clinical Record</span>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
                     Chronological Health Timeline
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Complete sequential audit of your medical checkups, clinical summaries, and lab panels
+                    Complete sequential audit of your medical checkups, imaging scans, biopsies, and hospital discharges
                 </p>
             </div>
 
@@ -65,19 +70,30 @@ const TimelinePage = () => {
                     />
                 </div>
 
-                <div className="flex items-center gap-2 self-start sm:self-auto text-xs">
-                    <span className="font-semibold text-slate-500">Filter:</span>
-                    {['ALL', 'REPORT'].map(type => (
+                {/* Category Filters */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs self-start sm:self-auto">
+                    <button
+                        onClick={() => setSelectedCategory('ALL')}
+                        className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer ${
+                            selectedCategory === 'ALL'
+                                ? 'bg-blue-600 text-white shadow-xs'
+                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
+                    >
+                        All ({items.length})
+                    </button>
+                    {REPORT_CATEGORIES.map(cat => (
                         <button
-                            key={type}
-                            onClick={() => setSelectedType(type)}
-                            className={`px-3 py-1.5 rounded-lg font-bold transition cursor-pointer ${
-                                selectedType === type
+                            key={cat.id}
+                            onClick={() => setSelectedCategory(cat.id)}
+                            className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+                                selectedCategory === cat.id
                                     ? 'bg-blue-600 text-white shadow-xs'
                                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                             }`}
                         >
-                            {type === 'ALL' ? 'All Events' : 'Lab Reports'}
+                            <span>{cat.icon}</span>
+                            <span>{cat.name.split(' ')[0]}</span>
                         </button>
                     ))}
                 </div>
@@ -87,9 +103,9 @@ const TimelinePage = () => {
             {filteredItems.length === 0 ? (
                 <div className="bg-white border-2 border-dashed border-slate-200 rounded-3xl p-12 text-center text-slate-500 space-y-4">
                     <div className="text-4xl">📅</div>
-                    <div className="font-bold text-slate-800 text-base">No timeline events found</div>
+                    <div className="font-bold text-slate-800 text-base">No timeline records found</div>
                     <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                        Upload lab reports on your dashboard to start building your chronological medical record.
+                        Upload reports across any of the 4 clinical domains to build your chronological medical record.
                     </p>
                     <Link
                         to="/patient/dashboard"
@@ -100,46 +116,50 @@ const TimelinePage = () => {
                 </div>
             ) : (
                 <div className="relative border-l-2 border-blue-200 ml-4 sm:ml-8 space-y-8 pb-8">
-                    {filteredItems.map((item, index) => (
-                        <div key={index} className="relative pl-6 sm:pl-10 group">
-                            {/* Dot / Icon */}
-                            <span className="absolute -left-[11px] top-1.5 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-black ring-4 ring-blue-50 group-hover:scale-110 transition-transform">
-                                ✓
-                            </span>
+                    {filteredItems.map((item, index) => {
+                        const cat = getCategoryObj(item.category);
+                        return (
+                            <div key={index} className="relative pl-6 sm:pl-10 group">
+                                {/* Dot / Icon */}
+                                <span className="absolute -left-[11px] top-1.5 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full h-5 w-5 flex items-center justify-center text-[10px] font-black ring-4 ring-blue-50 group-hover:scale-110 transition-transform">
+                                    ✓
+                                </span>
 
-                            <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-3">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                                    <h3 className="font-extrabold text-slate-900 text-base sm:text-lg flex items-center gap-2">
-                                        <span>{item.title}</span>
-                                    </h3>
-                                    <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full w-fit">
-                                        {new Date(item.date).toLocaleDateString(undefined, {
-                                            year: 'numeric',
-                                            month: 'long',
-                                            day: 'numeric'
-                                        })}
-                                    </span>
-                                </div>
+                                <div className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition space-y-3">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                        <h3 className="font-extrabold text-slate-900 text-base sm:text-lg flex items-center gap-2">
+                                            <span>{cat.icon}</span>
+                                            <span>{item.title}</span>
+                                        </h3>
+                                        <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full w-fit">
+                                            {new Date(item.date).toLocaleDateString(undefined, {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric'
+                                            })}
+                                        </span>
+                                    </div>
 
-                                <div className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200 font-normal">
-                                    {item.description}
-                                </div>
+                                    <div className="text-xs sm:text-sm text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200 font-normal">
+                                        {item.description}
+                                    </div>
 
-                                <div className="flex items-center justify-between pt-1 text-xs">
-                                    <span className="bg-blue-50 text-blue-700 font-bold px-2.5 py-0.5 rounded-full border border-blue-200">
-                                        {item.type}
-                                    </span>
-                                    <Link
-                                        to="/patient/dashboard"
-                                        className="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 hover:underline"
-                                    >
-                                        <span>View in Dashboard</span>
-                                        <span>➔</span>
-                                    </Link>
+                                    <div className="flex items-center justify-between pt-1 text-xs">
+                                        <span className={`px-2.5 py-0.5 rounded-full font-bold border ${cat.badgeColor}`}>
+                                            {cat.name}
+                                        </span>
+                                        <Link
+                                            to="/patient/dashboard"
+                                            className="text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 hover:underline"
+                                        >
+                                            <span>View in Dashboard</span>
+                                            <span>➔</span>
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

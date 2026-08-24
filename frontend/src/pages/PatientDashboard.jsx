@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { reportService } from '../services/api';
+import { REPORT_CATEGORIES } from '../data/mockHealthData';
 import ComparisonSection from '../components/ComparisonSection';
 
 const PatientDashboard = () => {
     const { user, isDemoMode } = useAuth();
     const [reports, setReports] = useState([]);
     const [file, setFile] = useState(null);
-    const [reportType, setReportType] = useState('BLOOD_TEST');
+    const [selectedCategory, setSelectedCategory] = useState('LABORATORY');
+    const [reportType, setReportType] = useState('LAB_CMP');
     const [notes, setNotes] = useState('');
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [dragActive, setDragActive] = useState(false);
     const [error, setError] = useState('');
     const [successMsg, setSuccessMsg] = useState('');
+
+    // Category filter for table
+    const [activeTabCategory, setActiveTabCategory] = useState('ALL');
 
     // Semantic Search states
     const [searchQuery, setSearchQuery] = useState('');
@@ -25,6 +30,7 @@ const PatientDashboard = () => {
     const [isSummaryLoading, setIsSummaryLoading] = useState(false);
     const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
     const [selectedReportName, setSelectedReportName] = useState('');
+    const [selectedReportType, setSelectedReportType] = useState('');
     const [selectedReportId, setSelectedReportId] = useState(null);
     const [copied, setCopied] = useState(false);
 
@@ -40,6 +46,15 @@ const PatientDashboard = () => {
     useEffect(() => {
         fetchReports();
     }, []);
+
+    // Update reportType default when category changes
+    const handleCategoryChange = (catId) => {
+        setSelectedCategory(catId);
+        const cat = REPORT_CATEGORIES.find(c => c.id === catId);
+        if (cat && cat.types.length > 0) {
+            setReportType(cat.types[0].value);
+        }
+    };
 
     // Drag and drop handlers
     const handleDrag = (e) => {
@@ -69,7 +84,7 @@ const PatientDashboard = () => {
 
     const handleUpload = async (e) => {
         e.preventDefault();
-        if (!file) return setError('Please select or drop a PDF lab report.');
+        if (!file) return setError('Please select or drop a PDF medical report.');
         
         setIsUploading(true);
         setError('');
@@ -80,7 +95,7 @@ const PatientDashboard = () => {
             setUploadProgress(60);
             await reportService.uploadReport(file, reportType, notes);
             setUploadProgress(100);
-            setSuccessMsg('Report uploaded, parsed, and AI-summarized successfully!');
+            setSuccessMsg('Report uploaded, parsed, and AI clinical summary generated successfully!');
             setFile(null);
             setNotes('');
             const fileInput = document.getElementById('file-upload');
@@ -101,7 +116,7 @@ const PatientDashboard = () => {
         try {
             await reportService.loadSampleReports();
             await fetchReports();
-            setSuccessMsg('Loaded 2 comprehensive sample clinical lab reports (Jan & Feb 2026)!');
+            setSuccessMsg('Loaded 5 diverse clinical records across Labs, Radiology, Pathology, and Discharge Summary!');
             setTimeout(() => setSuccessMsg(''), 5000);
         } catch (err) {
             setError('Failed to load sample reports.');
@@ -135,9 +150,10 @@ const PatientDashboard = () => {
         }
     };
 
-    const handleViewSummary = async (id, fileName) => {
+    const handleViewSummary = async (id, fileName, type) => {
         setIsSummaryLoading(true);
         setSelectedReportName(fileName);
+        setSelectedReportType(type);
         setSelectedReportId(id);
         setIsSummaryModalOpen(true);
         setSelectedReportSummary(null);
@@ -181,30 +197,57 @@ const PatientDashboard = () => {
         setIsSearching(false);
     };
 
+    // Helper to get category metadata
+    const getReportCategory = (type) => {
+        for (const cat of REPORT_CATEGORIES) {
+            if (cat.types.some(t => t.value === type)) return cat;
+        }
+        if (type === 'BLOOD_TEST') return REPORT_CATEGORIES[0];
+        if (type === 'PRESCRIPTION' || type === 'DISCHARGE_SUMMARY' || type === 'CONSULTATION') return REPORT_CATEGORIES[3];
+        return REPORT_CATEGORIES[3];
+    };
+
+    const getReportTypeLabel = (type) => {
+        for (const cat of REPORT_CATEGORIES) {
+            const found = cat.types.find(t => t.value === type);
+            if (found) return `${found.icon} ${found.label}`;
+        }
+        return (type || 'REPORT').replace(/_/g, ' ');
+    };
+
+    // Filter reports based on active tab
+    const filteredReports = reports.filter(r => {
+        if (activeTabCategory === 'ALL') return true;
+        const cat = getReportCategory(r.reportType || r.category);
+        return cat.id === activeTabCategory;
+    });
+
+    const activeCatObj = REPORT_CATEGORIES.find(c => c.id === selectedCategory) || REPORT_CATEGORIES[0];
+
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-            {/* Header with quick stats */}
+            {/* Header with key statistics */}
             <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
                         <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-2">
-                            <span>{isDemoMode ? '🔵 Interactive Demo Workspace' : '🟢 Live Clinical Workspace'}</span>
+                            <span>{isDemoMode ? '🔵 Interactive Clinical Workspace' : '🟢 Live Clinical Workspace'}</span>
                         </div>
                         <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
                             Welcome back, {user?.name || 'Patient'}
                         </h1>
                         <p className="text-blue-100 text-xs sm:text-sm mt-1 max-w-xl">
-                            Upload and organize your lab reports. Our AI automatically parses biomarkers, summarizes clinical findings, and tracks your health trajectory.
+                            Upload and organize your clinical records across Labs, Radiology, Pathology, and Discharge records with tailored AI clinical summaries.
                         </p>
                     </div>
 
-                    {/* Quick Load Sample Reports button */}
+                    {/* Quick Load Sample Clinical Bundle */}
                     <div className="flex flex-col sm:flex-row gap-3">
                         <button
                             onClick={handleQuickLoadSample}
                             className="bg-white hover:bg-blue-50 text-blue-800 font-bold px-4 py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
                         >
-                            <span>⚡ Load 2 Sample Reports</span>
+                            <span>⚡ Load 5 Multi-Domain Reports</span>
                         </button>
                     </div>
                 </div>
@@ -212,12 +255,12 @@ const PatientDashboard = () => {
                 {/* Dashboard Key Stat Chips */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-white/20">
                     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Total Reports</div>
+                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Total Documents</div>
                         <div className="text-2xl font-black text-white mt-0.5">{reports.length}</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Biomarkers Tracked</div>
-                        <div className="text-2xl font-black text-white mt-0.5">{reports.length > 0 ? '9 Metrics' : '0'}</div>
+                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Clinical Domains</div>
+                        <div className="text-2xl font-black text-white mt-0.5">4 Domains</div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
                         <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">AI Summaries</div>
@@ -229,7 +272,6 @@ const PatientDashboard = () => {
                     </div>
                 </div>
 
-                {/* Decorative background glow */}
                 <div className="absolute right-0 top-0 translate-x-1/4 -translate-y-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"></div>
             </div>
 
@@ -254,30 +296,61 @@ const PatientDashboard = () => {
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 h-fit space-y-5">
                     <div className="flex items-center justify-between">
                         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <span>📤</span> Upload Medical Report
+                            <span>📤</span> Upload Clinical Report
                         </h2>
-                        <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">PDF only</span>
+                        <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">PDF format</span>
                     </div>
 
                     <form onSubmit={handleUpload} className="space-y-4">
+                        {/* Step 1: Category Picker */}
                         <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Report Type</label>
+                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
+                                1. Report Category
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                                {REPORT_CATEGORIES.map(cat => (
+                                    <button
+                                        type="button"
+                                        key={cat.id}
+                                        onClick={() => handleCategoryChange(cat.id)}
+                                        className={`p-2.5 rounded-xl border text-left transition flex items-center gap-2 cursor-pointer ${
+                                            selectedCategory === cat.id
+                                                ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold shadow-xs'
+                                                : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100 text-slate-700 font-medium'
+                                        }`}
+                                    >
+                                        <span className="text-lg">{cat.icon}</span>
+                                        <div className="truncate text-xs leading-tight">
+                                            {cat.name.split(' ')[0]}
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Step 2: Specialized Sub-Type Selector */}
+                        <div>
+                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
+                                2. Specific Report Type
+                            </label>
                             <select
                                 value={reportType}
                                 onChange={e => setReportType(e.target.value)}
-                                className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                                className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                             >
-                                <option value="BLOOD_TEST">🩸 Blood Test Panel</option>
-                                <option value="PRESCRIPTION">💊 Prescription / Medications</option>
-                                <option value="DISCHARGE_SUMMARY">🏥 Hospital Discharge Summary</option>
-                                <option value="CONSULTATION">🩺 Doctor Consultation Notes</option>
-                                <option value="OTHER">📄 Other Medical Report</option>
+                                {activeCatObj.types.map(t => (
+                                    <option key={t.value} value={t.value}>
+                                        {t.icon} {t.label}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
-                        {/* Drag and Drop Zone */}
+                        {/* Step 3: Drag and Drop PDF Zone */}
                         <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Lab Report PDF</label>
+                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
+                                3. Medical PDF Document
+                            </label>
                             <div
                                 onDragEnter={handleDrag}
                                 onDragLeave={handleDrag}
@@ -312,8 +385,8 @@ const PatientDashboard = () => {
                                     </div>
                                 ) : (
                                     <div className="space-y-1">
-                                        <div className="text-2xl">📁</div>
-                                        <div className="text-xs font-semibold text-slate-700">Drag & drop your PDF here</div>
+                                        <div className="text-2xl">{activeCatObj.icon}</div>
+                                        <div className="text-xs font-semibold text-slate-700">Drag & drop your {activeCatObj.name.toLowerCase()} PDF</div>
                                         <div className="text-[11px] text-blue-600 font-bold hover:underline">or browse from device</div>
                                     </div>
                                 )}
@@ -321,13 +394,13 @@ const PatientDashboard = () => {
                         </div>
 
                         <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Notes (Optional)</label>
+                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Clinical Notes (Optional)</label>
                             <textarea
                                 value={notes}
                                 onChange={e => setNotes(e.target.value)}
                                 rows="2"
                                 className="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                                placeholder="e.g. Fasting 12 hours before test, feeling dizzy in morning..."
+                                placeholder="e.g. Mild persistent cough for 2 weeks; right thyroid nodule follow-up..."
                             ></textarea>
                         </div>
 
@@ -353,7 +426,7 @@ const PatientDashboard = () => {
                                     <span>Processing Report...</span>
                                 </>
                             ) : (
-                                <span>Upload & Analyze</span>
+                                <span>Upload & Generate AI Insights</span>
                             )}
                         </button>
                     </form>
@@ -364,9 +437,9 @@ const PatientDashboard = () => {
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <span>📚</span> My Medical Reports ({reports.length})
+                                <span>📚</span> Medical Records Library ({reports.length})
                             </h2>
-                            <p className="text-xs text-slate-500">Historical records stored with vector embeddings</p>
+                            <p className="text-xs text-slate-500">Organized by clinical category with semantic vector search</p>
                         </div>
                         
                         {/* Semantic Search Bar */}
@@ -375,7 +448,7 @@ const PatientDashboard = () => {
                                 type="text"
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
-                                placeholder="Semantic search (e.g. sugar, BP)..."
+                                placeholder="Search (e.g. chest, thyroid, glucose)..."
                                 className="border border-slate-300 rounded-xl px-3.5 py-1.5 text-xs sm:text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full md:w-60"
                             />
                             <button
@@ -394,6 +467,38 @@ const PatientDashboard = () => {
                                 </button>
                             )}
                         </form>
+                    </div>
+
+                    {/* Category Filter Tabs */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs border-b border-slate-200">
+                        <button
+                            onClick={() => setActiveTabCategory('ALL')}
+                            className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer ${
+                                activeTabCategory === 'ALL'
+                                    ? 'bg-blue-600 text-white shadow-xs'
+                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            }`}
+                        >
+                            All Records ({reports.length})
+                        </button>
+                        {REPORT_CATEGORIES.map(cat => {
+                            const count = reports.filter(r => getReportCategory(r.reportType || r.category).id === cat.id).length;
+                            return (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveTabCategory(cat.id)}
+                                    className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                                        activeTabCategory === cat.id
+                                            ? 'bg-blue-600 text-white shadow-xs'
+                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                    }`}
+                                >
+                                    <span>{cat.icon}</span>
+                                    <span>{cat.name.split(' ')[0]}</span>
+                                    <span className="text-[10px] opacity-75">({count})</span>
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Semantic Search Results Banner */}
@@ -415,7 +520,7 @@ const PatientDashboard = () => {
                                     <div key={index} className="bg-white p-3.5 rounded-xl border border-indigo-100 shadow-sm flex flex-col sm:flex-row justify-between gap-2 sm:items-center">
                                         <div className="flex-1">
                                             <div className="text-xs font-bold text-indigo-700 flex items-center gap-2">
-                                                <span>{(res.reportType || 'REPORT').replace(/_/g, ' ')}</span>
+                                                <span>{getReportTypeLabel(res.reportType)}</span>
                                                 <span className="text-slate-300">•</span>
                                                 <span className="text-slate-500 font-normal">{new Date(res.uploadedAt).toLocaleDateString()}</span>
                                             </div>
@@ -424,7 +529,7 @@ const PatientDashboard = () => {
                                             </p>
                                         </div>
                                         <button
-                                            onClick={() => handleViewSummary(res.reportId, `Report #${res.reportId}`)}
+                                            onClick={() => handleViewSummary(res.reportId, `Report #${res.reportId}`, res.reportType)}
                                             className="text-blue-600 hover:text-blue-800 text-xs font-bold bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer self-start sm:self-center"
                                         >
                                             View AI Summary
@@ -441,69 +546,72 @@ const PatientDashboard = () => {
                             <thead className="bg-slate-50">
                                 <tr>
                                     <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Report Type</th>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">File Name</th>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Status</th>
+                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Type & Domain</th>
+                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Document Name</th>
+                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">AI Insights</th>
                                     <th className="py-3 px-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
-                                {reports.length === 0 ? (
+                                {filteredReports.length === 0 ? (
                                     <tr>
                                         <td colSpan="5" className="py-12 text-center text-slate-400">
                                             <div className="text-3xl mb-2">📄</div>
-                                            <p className="text-sm font-semibold text-slate-600">No medical reports uploaded yet.</p>
-                                            <p className="text-xs text-slate-400 mt-1">Upload a PDF report above or click "Load 2 Sample Reports" to test.</p>
+                                            <p className="text-sm font-semibold text-slate-600">No medical reports found in this category.</p>
+                                            <p className="text-xs text-slate-400 mt-1">Upload a report or click "Load 5 Multi-Domain Reports".</p>
                                         </td>
                                     </tr>
                                 ) : (
-                                    reports.map(report => (
-                                        <tr key={report.id} className="hover:bg-slate-50/80 transition">
-                                            <td className="py-3.5 px-3 text-xs text-slate-600 whitespace-nowrap font-medium">
-                                                {new Date(report.uploadedAt).toLocaleDateString(undefined, {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric'
-                                                })}
-                                            </td>
-                                            <td className="py-3.5 px-3 text-xs font-bold text-slate-800 whitespace-nowrap">
-                                                <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md border border-blue-200">
-                                                    {(report.reportType || 'BLOOD_TEST').replace(/_/g, ' ')}
-                                                </span>
-                                            </td>
-                                            <td className="py-3.5 px-3 text-xs text-slate-700 font-medium truncate max-w-[140px]" title={report.fileName}>
-                                                {report.fileName}
-                                            </td>
-                                            <td className="py-3.5 px-3 text-xs whitespace-nowrap">
-                                                <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                    Summarized
-                                                </span>
-                                            </td>
-                                            <td className="py-3.5 px-3 text-xs font-medium text-right space-x-2 whitespace-nowrap">
-                                                <button
-                                                    onClick={() => handleViewSummary(report.id, report.fileName)}
-                                                    className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200 font-bold transition cursor-pointer"
-                                                >
-                                                    AI Summary
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDownload(report.id, report.fileName)}
-                                                    className="text-slate-600 hover:text-slate-900 px-2 py-1 transition cursor-pointer"
-                                                    title="Download Report"
-                                                >
-                                                    ⬇
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(report.id)}
-                                                    className="text-red-500 hover:text-red-700 px-2 py-1 transition cursor-pointer"
-                                                    title="Delete Report"
-                                                >
-                                                    🗑
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
+                                    filteredReports.map(report => {
+                                        const cat = getReportCategory(report.reportType || report.category);
+                                        return (
+                                            <tr key={report.id} className="hover:bg-slate-50/80 transition">
+                                                <td className="py-3.5 px-3 text-xs text-slate-600 whitespace-nowrap font-medium">
+                                                    {new Date(report.uploadedAt).toLocaleDateString(undefined, {
+                                                        year: 'numeric',
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    })}
+                                                </td>
+                                                <td className="py-3.5 px-3 text-xs font-bold whitespace-nowrap">
+                                                    <span className={`px-2.5 py-1 rounded-lg border font-semibold inline-flex items-center gap-1.5 ${cat.badgeColor}`}>
+                                                        <span>{getReportTypeLabel(report.reportType)}</span>
+                                                    </span>
+                                                </td>
+                                                <td className="py-3.5 px-3 text-xs text-slate-700 font-medium truncate max-w-[140px]" title={report.fileName}>
+                                                    {report.fileName}
+                                                </td>
+                                                <td className="py-3.5 px-3 text-xs whitespace-nowrap">
+                                                    <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                        Tailored AI
+                                                    </span>
+                                                </td>
+                                                <td className="py-3.5 px-3 text-xs font-medium text-right space-x-2 whitespace-nowrap">
+                                                    <button
+                                                        onClick={() => handleViewSummary(report.id, report.fileName, report.reportType)}
+                                                        className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200 font-bold transition cursor-pointer"
+                                                    >
+                                                        AI Insights
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDownload(report.id, report.fileName)}
+                                                        className="text-slate-600 hover:text-slate-900 px-2 py-1 transition cursor-pointer"
+                                                        title="Download Report"
+                                                    >
+                                                        ⬇
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(report.id)}
+                                                        className="text-red-500 hover:text-red-700 px-2 py-1 transition cursor-pointer"
+                                                        title="Delete Report"
+                                                    >
+                                                        🗑
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -511,14 +619,16 @@ const PatientDashboard = () => {
                 </div>
             </div>
 
-            {/* AI Medical Summary & Comparison Modal */}
+            {/* AI Medical Summary & Clinical Insights Modal */}
             {isSummaryModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
                     <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] flex flex-col border border-slate-200">
                         {/* Modal Header */}
                         <div className="flex items-start justify-between pb-4 border-b border-slate-200">
                             <div>
-                                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">Gemini 2.5 Flash Summary</span>
+                                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                                    {getReportTypeLabel(selectedReportType)}
+                                </span>
                                 <h3 className="text-xl font-extrabold text-slate-900 mt-0.5">
                                     {selectedReportName}
                                 </h3>
@@ -536,7 +646,7 @@ const PatientDashboard = () => {
                             {isSummaryLoading ? (
                                 <div className="flex flex-col items-center justify-center py-16 space-y-4">
                                     <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                                    <span className="text-slate-500 font-semibold text-sm">Extracting lab biomarkers & analyzing with Gemini...</span>
+                                    <span className="text-slate-500 font-semibold text-sm">Generating tailored clinical AI insights...</span>
                                 </div>
                             ) : (
                                 <>
@@ -547,8 +657,10 @@ const PatientDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {/* Longitudinal Comparison Component */}
-                                    <ComparisonSection />
+                                    {/* Longitudinal Comparison Component for Lab reports */}
+                                    {(selectedReportType?.startsWith('LAB_') || selectedReportType === 'BLOOD_TEST') && reports.length > 1 && (
+                                        <ComparisonSection />
+                                    )}
                                 </>
                             )}
                         </div>
@@ -559,7 +671,7 @@ const PatientDashboard = () => {
                                 onClick={handleCopyToClipboard}
                                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-300 transition flex items-center gap-1.5 cursor-pointer"
                             >
-                                <span>{copied ? '✅ Copied!' : '📋 Copy Summary'}</span>
+                                <span>{copied ? '✅ Copied!' : '📋 Copy Clinical Insights'}</span>
                             </button>
                             <button
                                 onClick={() => setIsSummaryModalOpen(false)}

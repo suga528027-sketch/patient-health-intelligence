@@ -3,27 +3,28 @@ import { reportService } from '../services/api';
 
 const DEFAULT_WELCOME = {
     sender: 'assistant',
-    text: `### 👋 Hello! I am your AI Patient Health Assistant
+    text: `### 👋 Hello! I am your AI Patient Clinical Assistant
 
-I can answer questions regarding your uploaded lab tests, compare biomarker trajectories over time, and explain medical terminology in plain language.
+I can analyze and answer questions across all your medical records — including **Blood Tests**, **Radiology Scans (X-Ray/CT/MRI)**, **Pathology/Biopsies**, and **Hospital Discharge Summaries**.
 
 **Try asking me:**
-- *"Has my blood pressure increased compared to last time?"*
-- *"Explain my fasting glucose and HbA1c results."*
-- *"Compare my latest cholesterol panel with my previous one."*
-- *"Give me a full summary table of all my health changes."*`,
+- *"What did my chest X-ray show?"*
+- *"Explain my thyroid nodule biopsy findings."*
+- *"What are my active discharge medications and doses?"*
+- *"Compare my latest blood pressure and fasting glucose with my previous test."*`,
     sources: []
 };
 
 const SUGGESTED_PROMPTS = [
-    "🩺 Compare my Blood Pressure",
-    "🩸 Explain Fasting Glucose & HbA1c",
-    "🫀 Analyze Cholesterol & Lipids",
-    "📊 Compare latest test with previous",
-    "📝 Questions for my next doctor visit"
+    "🩻 Explain my Chest X-Ray",
+    "🔬 Review Thyroid Biopsy",
+    "💊 My Discharge Medications",
+    "🩺 Compare Blood Pressure",
+    "🩸 Fasting Glucose & HbA1c",
+    "🫀 Cholesterol Analysis"
 ];
 
-const CHAT_STORAGE_KEY = 'healthplatform_chat_messages';
+const CHAT_STORAGE_KEY = 'healthplatform_chat_messages_v2';
 
 const ChatPage = () => {
     const [messages, setMessages] = useState(() => {
@@ -93,7 +94,6 @@ const ChatPage = () => {
     const renderFormattedText = (content) => {
         if (!content) return null;
 
-        // Split into lines for markdown formatting
         const lines = content.split('\n');
         return (
             <div className="space-y-2 text-xs sm:text-sm leading-relaxed">
@@ -126,9 +126,9 @@ const ChatPage = () => {
                             </div>
                         );
                     }
-                    // Table line or divider
+                    // Table line
                     if (trimmed.startsWith('|')) {
-                        if (trimmed.includes('---')) return null; // skip markdown table divider line
+                        if (trimmed.includes('---')) return null;
                         const cells = trimmed.split('|').filter(c => c.trim().length > 0);
                         return (
                             <div key={idx} className="grid grid-cols-4 sm:grid-cols-5 gap-1 bg-slate-100/80 p-1.5 rounded-lg text-[11px] font-medium border border-slate-200">
@@ -142,7 +142,7 @@ const ChatPage = () => {
                     if (!trimmed) {
                         return <div key={idx} className="h-1.5"></div>;
                     }
-                    // Regular paragraph
+                    // Paragraph
                     return <p key={idx} dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(line) }} />;
                 })}
             </div>
@@ -168,10 +168,10 @@ const ChatPage = () => {
                         <h2 className="text-base sm:text-lg font-extrabold text-slate-900 flex items-center gap-2">
                             Gemini AI Clinical Assistant
                             <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
-                                RAG Active
+                                Multi-Domain RAG
                             </span>
                         </h2>
-                        <p className="text-xs text-slate-500">Secure semantic retrieval across your lab records</p>
+                        <p className="text-xs text-slate-500">Query your Lab, Radiology, Pathology & Clinical records</p>
                     </div>
                 </div>
 
@@ -233,7 +233,7 @@ const ChatPage = () => {
                                                     >
                                                         <div className="font-extrabold text-indigo-900 flex items-center justify-between">
                                                             <span>{formatName(src.reportType)}</span>
-                                                            <span className="text-[10px] text-slate-400 font-normal">Report #{src.reportId}</span>
+                                                            <span className="text-[10px] text-slate-400 font-normal">Doc #{src.reportId}</span>
                                                         </div>
                                                         <div className="text-[10px] text-slate-500">
                                                             {new Date(src.uploadedAt).toLocaleDateString()}
@@ -259,7 +259,7 @@ const ChatPage = () => {
                                     <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
                                     <div className="w-2.5 h-2.5 bg-cyan-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                                 </div>
-                                <span className="text-xs text-slate-500 font-medium">Assistant is querying Qdrant & Gemini...</span>
+                                <span className="text-xs text-slate-500 font-medium">Querying clinical records & Google Gemini...</span>
                             </div>
                         </div>
                     )}
@@ -272,7 +272,7 @@ const ChatPage = () => {
                         type="text"
                         value={input}
                         onChange={e => setInput(e.target.value)}
-                        placeholder="Ask about blood pressure, fasting glucose, trend comparisons..."
+                        placeholder="Ask about X-rays, biopsies, discharge medications, blood tests..."
                         className="flex-1 border border-slate-300 rounded-xl px-4 py-3 text-xs sm:text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
                         disabled={loading}
                     />

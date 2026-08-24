@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { 
     DEMO_USER, 
+    REPORT_CATEGORIES,
     INITIAL_REPORTS, 
     MOCK_COMPARISON, 
     MOCK_TIMELINE, 
@@ -23,8 +24,8 @@ const isDemoActive = () => {
     return !token || token.startsWith('demo-');
 };
 
-// Local storage storage keys for demo persistence
-const DEMO_REPORTS_KEY = 'demo_patient_reports';
+// Local storage keys for demo persistence
+const DEMO_REPORTS_KEY = 'demo_patient_reports_v2';
 const getStoredDemoReports = () => {
     const stored = localStorage.getItem(DEMO_REPORTS_KEY);
     if (stored) {
@@ -39,6 +40,18 @@ const getStoredDemoReports = () => {
 
 const saveDemoReports = (reports) => {
     localStorage.setItem(DEMO_REPORTS_KEY, JSON.stringify(reports));
+};
+
+// Find category for a given report type
+const getCategoryForType = (reportType) => {
+    for (const cat of REPORT_CATEGORIES) {
+        if (cat.types.some(t => t.value === reportType)) {
+            return cat.id;
+        }
+    }
+    if (reportType === 'BLOOD_TEST') return 'LABORATORY';
+    if (reportType === 'PRESCRIPTION' || reportType === 'DISCHARGE_SUMMARY' || reportType === 'CONSULTATION') return 'CLINICAL';
+    return 'CLINICAL';
 };
 
 // Attach Authorization header if token exists
@@ -85,7 +98,6 @@ export const authService = {
             }
             return response.data;
         } catch (err) {
-            // If connection refused (backend down) and user tries demo credentials, fallback gracefully
             if (!err.response && (email === DEMO_USER.email || email.includes('demo'))) {
                 const user = { ...DEMO_USER, email };
                 const token = 'demo-jwt-token-' + Date.now();
@@ -100,8 +112,7 @@ export const authService = {
 
     register: async (name, email, password) => {
         if (isDemoActive()) {
-            const user = { id: Date.now(), name, email, role: 'ROLE_PATIENT' };
-            return user;
+            return { id: Date.now(), name, email, role: 'ROLE_PATIENT' };
         }
 
         try {
@@ -109,7 +120,6 @@ export const authService = {
             return response.data;
         } catch (err) {
             if (!err.response) {
-                // Fallback for offline demo
                 return { id: Date.now(), name, email, role: 'ROLE_PATIENT' };
             }
             throw err;
@@ -130,21 +140,63 @@ export const authService = {
 export const reportService = {
     uploadReport: async (file, reportType, notes) => {
         if (isDemoActive()) {
-            await new Promise((resolve) => setTimeout(resolve, 800)); // Simulate processing delay
+            await new Promise((resolve) => setTimeout(resolve, 800));
             const reports = getStoredDemoReports();
+            const category = getCategoryForType(reportType);
+
+            let tailoredSummary = "";
+            if (category === "RADIOLOGY") {
+                tailoredSummary = `### 🩻 Diagnostic Imaging (Radiology): ${file ? file.name : 'Imaging Scan'}\n\n` +
+                    `### 🩻 Imaging Technique & Anatomy Scanned\n` +
+                    `- **Modality:** ${reportType.replace('RAD_', '')} Radiologic Scan\n` +
+                    `- **Target Area:** Anatomical imaging region\n\n` +
+                    `### 🔍 Key Clinical Findings Explained\n` +
+                    `- Structures demonstrate normal physiological alignment without acute abnormalities.\n` +
+                    (notes ? `- **Clinical Notes:** ${notes}\n` : '') +
+                    `\n### 💡 Impression & What This Means for You\n` +
+                    `1. Overall benign/stable radiologic appearance.\n\n` +
+                    `### 🩺 Recommended Discussion with Your Physician\n` +
+                    `- Review clinical correlation with your ordering doctor.`;
+            } else if (category === "PATHOLOGY") {
+                tailoredSummary = `### 🔬 Pathology & Biopsy Analysis: ${file ? file.name : 'Biopsy Specimen'}\n\n` +
+                    `### 🔬 Specimen & Procedure Overview\n` +
+                    `- **Procedure:** Tissue examination & histology review\n\n` +
+                    `### 🧫 Pathological Findings & Diagnosis\n` +
+                    `- Benign cellular architecture observed without malignant cellular features.\n\n` +
+                    `### 📏 Margin & Biomarker Status\n` +
+                    `- Negative for neoplastic atypia.\n\n` +
+                    `### 🩺 Next Steps & Doctor Discussion Points\n` +
+                    `- Routine clinical follow-up as advised by specialist.`;
+            } else if (category === "CLINICAL") {
+                tailoredSummary = `### 🏥 Clinical Record Summary: ${file ? file.name : 'Clinical Record'}\n\n` +
+                    `### 🏥 Clinical Overview & Diagnosis\n` +
+                    `- Medical documentation processed and indexed for longitudinal tracking.\n\n` +
+                    `### 💊 Medications & Treatment Plan\n` +
+                    `- Maintain active prescribed medication schedule as directed by your physician.\n\n` +
+                    `### ⚠️ Red-Flag Warning Signs\n` +
+                    `- Contact emergency services if sudden severe pain or breathing distress occurs.\n\n` +
+                    `### 📅 Follow-Up & Lifestyle Care Plan\n` +
+                    `- Adhere to prescribed follow-up appointments.`;
+            } else {
+                tailoredSummary = `### 🧪 Laboratory & Blood Test Summary: ${file ? file.name : 'Lab Panel'}\n\n` +
+                    `### 🧪 Panel Overview & Health Summary\n` +
+                    `- Biomarkers parsed and synchronized with your longitudinal health trends.\n\n` +
+                    `### 📊 Biomarker Analysis & Key Metrics\n` +
+                    `- Values indexed in Qdrant vector database for AI assistant retrieval.\n` +
+                    (notes ? `- **Patient Notes:** ${notes}\n` : '') +
+                    `\n### 🩺 Doctor Discussion Points\n` +
+                    `- Review any out-of-range indicators with your primary care provider.`;
+            }
+
             const newReport = {
                 id: Date.now(),
-                reportType: reportType || 'BLOOD_TEST',
-                fileName: file ? file.name : 'Uploaded_Lab_Report.pdf',
+                category: category,
+                reportType: reportType || 'LAB_CMP',
+                fileName: file ? file.name : 'Uploaded_Clinical_Report.pdf',
                 uploadedAt: new Date().toISOString(),
-                summaryText: `### 📋 AI Medical Summary: ${file ? file.name : 'Uploaded Report'}\n\n` +
-                    `**Overview:** Analysis completed using Gemini 2.5 Flash.\n\n` +
-                    `**Key Observations:**\n` +
-                    `- Blood pressure and glucose values processed.\n` +
-                    `- Biomarkers indexed in Qdrant vector database for semantic retrieval.\n` +
-                    (notes ? `\n**Patient Notes:** ${notes}\n` : '') +
-                    `\n**Advice:** Review flagged values with your primary physician.`
+                summaryText: tailoredSummary
             };
+
             reports.unshift(newReport);
             saveDemoReports(reports);
             return newReport;
@@ -162,7 +214,6 @@ export const reportService = {
             return response.data;
         } catch (err) {
             if (!err.response) {
-                // Fallback to local demo upload if network fails
                 return reportService.uploadReport(file, reportType, notes);
             }
             throw err;
@@ -247,8 +298,8 @@ export const reportService = {
             const results = [];
             
             reports.forEach(r => {
-                const text = (r.summaryText + ' ' + r.fileName).toLowerCase();
-                if (text.includes(q) || q.length === 0 || q.includes('sugar') || q.includes('glucose') || q.includes('bp') || q.includes('cholesterol')) {
+                const text = (r.summaryText + ' ' + r.fileName + ' ' + r.reportType).toLowerCase();
+                if (text.includes(q) || q.length === 0 || q.includes('sugar') || q.includes('glucose') || q.includes('bp') || q.includes('xray') || q.includes('biopsy') || q.includes('medication')) {
                     results.push({
                         reportId: r.id,
                         reportType: r.reportType,
@@ -274,8 +325,9 @@ export const reportService = {
     getLatestComparison: async () => {
         if (isDemoActive()) {
             const reports = getStoredDemoReports();
-            if (reports.length < 2) {
-                return { message: "Upload at least 2 reports to generate a chronological biomarker comparison." };
+            const labReports = reports.filter(r => (r.category === 'LABORATORY' || r.reportType?.startsWith('LAB_') || r.reportType === 'BLOOD_TEST'));
+            if (labReports.length < 2) {
+                return { message: "Upload at least 2 laboratory reports to generate a chronological biomarker comparison." };
             }
             return MOCK_COMPARISON;
         }
@@ -311,12 +363,13 @@ export const reportService = {
     getTimeline: async () => {
         if (isDemoActive()) {
             const reports = getStoredDemoReports();
-            const items = reports.map((r, idx) => ({
+            const items = reports.map((r) => ({
                 id: r.id,
                 date: r.uploadedAt,
-                type: 'REPORT',
+                category: r.category || getCategoryForType(r.reportType),
+                type: r.reportType,
                 title: r.fileName.replace('.pdf', '').replace(/_/g, ' '),
-                description: r.summaryText.split('\n').filter(l => l.trim() && !l.startsWith('#'))[0] || 'Medical Lab Report',
+                description: r.summaryText.split('\n').filter(l => l.trim() && !l.startsWith('#'))[0] || 'Medical Clinical Report',
                 reportId: r.id
             }));
             return { items };
