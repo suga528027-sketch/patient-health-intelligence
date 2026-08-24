@@ -95,7 +95,7 @@ const PatientDashboard = () => {
             setUploadProgress(60);
             await reportService.uploadReport(file, reportType, notes);
             setUploadProgress(100);
-            setSuccessMsg('Report uploaded, parsed, and AI clinical summary generated successfully!');
+            setSuccessMsg('Report uploaded, parsed, and AI clinical summary generated successfully.');
             setFile(null);
             setNotes('');
             const fileInput = document.getElementById('file-upload');
@@ -103,7 +103,7 @@ const PatientDashboard = () => {
             await fetchReports();
             setTimeout(() => setSuccessMsg(''), 5000);
         } catch (err) {
-            setError(err.response?.data?.error || 'Upload failed. Ensure backend or demo mode is active.');
+            setError(err.response?.data?.error || 'Upload failed. Please check network connection.');
         } finally {
             setIsUploading(false);
             setUploadProgress(0);
@@ -116,7 +116,7 @@ const PatientDashboard = () => {
         try {
             await reportService.loadSampleReports();
             await fetchReports();
-            setSuccessMsg('Loaded 5 diverse clinical records across Labs, Radiology, Pathology, and Discharge Summary!');
+            setSuccessMsg('Loaded 5 multi-domain clinical reports across Laboratory, Radiology, Pathology, and Discharge Summary.');
             setTimeout(() => setSuccessMsg(''), 5000);
         } catch (err) {
             setError('Failed to load sample reports.');
@@ -126,7 +126,7 @@ const PatientDashboard = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this report?")) return;
+        if (!window.confirm("Are you sure you want to delete this clinical record?")) return;
         try {
             await reportService.deleteReport(id);
             fetchReports();
@@ -210,7 +210,7 @@ const PatientDashboard = () => {
     const getReportTypeLabel = (type) => {
         for (const cat of REPORT_CATEGORIES) {
             const found = cat.types.find(t => t.value === type);
-            if (found) return `${found.icon} ${found.label}`;
+            if (found) return found.label;
         }
         return (type || 'REPORT').replace(/_/g, ' ');
     };
@@ -225,433 +225,429 @@ const PatientDashboard = () => {
     const activeCatObj = REPORT_CATEGORIES.find(c => c.id === selectedCategory) || REPORT_CATEGORIES[0];
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-            {/* Header with key statistics */}
-            <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-                <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div>
-                        <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold mb-2">
-                            <span>{isDemoMode ? '🔵 Interactive Clinical Workspace' : '🟢 Live Clinical Workspace'}</span>
+        <div className="min-h-screen bg-[#F8FAFC]">
+            {/* Professional Subheader Banner (WHO Institutional Style) */}
+            <div className="bg-[#1C355E] text-white border-b border-[#15294A] py-8 px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <div className="text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
+                                Patient Health Record & Diagnostics Portal
+                            </div>
+                            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                                Medical Dashboard: {user?.name || 'Patient Record'}
+                            </h1>
+                            <p className="text-sm text-slate-200 mt-1 max-w-2xl">
+                                Secure clinical document repository with automated optical extraction, semantic vector search, and longitudinal biomarker tracking.
+                            </p>
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
-                            Welcome back, {user?.name || 'Patient'}
-                        </h1>
-                        <p className="text-blue-100 text-xs sm:text-sm mt-1 max-w-xl">
-                            Upload and organize your clinical records across Labs, Radiology, Pathology, and Discharge records with tailored AI clinical summaries.
-                        </p>
+
+                        {/* Quick Sample Button */}
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={handleQuickLoadSample}
+                                className="bg-white hover:bg-slate-100 text-[#1C355E] font-semibold px-4 py-2 rounded text-xs sm:text-sm border border-slate-200 shadow-sm transition flex items-center gap-2 cursor-pointer"
+                            >
+                                <span>Load Sample Clinical Bundle</span>
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Quick Load Sample Clinical Bundle */}
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <button
-                            onClick={handleQuickLoadSample}
-                            className="bg-white hover:bg-blue-50 text-blue-800 font-bold px-4 py-2.5 rounded-xl shadow-md transition text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer"
-                        >
-                            <span>⚡ Load 5 Multi-Domain Reports</span>
-                        </button>
+                    {/* Institutional Metric Strip */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/15">
+                        <div className="bg-white/10 rounded p-3.5 border border-white/10">
+                            <div className="text-xs font-medium text-slate-300">Total Documents</div>
+                            <div className="text-2xl font-bold text-white mt-1">{reports.length}</div>
+                        </div>
+                        <div className="bg-white/10 rounded p-3.5 border border-white/10">
+                            <div className="text-xs font-medium text-slate-300">Clinical Categories</div>
+                            <div className="text-2xl font-bold text-white mt-1">4 Domains</div>
+                        </div>
+                        <div className="bg-white/10 rounded p-3.5 border border-white/10">
+                            <div className="text-xs font-medium text-slate-300">AI Clinical Summaries</div>
+                            <div className="text-2xl font-bold text-white mt-1">{reports.length} Indexed</div>
+                        </div>
+                        <div className="bg-white/10 rounded p-3.5 border border-white/10">
+                            <div className="text-xs font-medium text-slate-300">Longitudinal Trajectory</div>
+                            <div className="text-2xl font-bold text-white mt-1">{reports.length >= 2 ? 'Active Delta' : 'Baseline'}</div>
+                        </div>
                     </div>
                 </div>
-
-                {/* Dashboard Key Stat Chips */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6 pt-6 border-t border-white/20">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Total Documents</div>
-                        <div className="text-2xl font-black text-white mt-0.5">{reports.length}</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Clinical Domains</div>
-                        <div className="text-2xl font-black text-white mt-0.5">4 Domains</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">AI Summaries</div>
-                        <div className="text-2xl font-black text-emerald-300 mt-0.5">{reports.length} Ready</div>
-                    </div>
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
-                        <div className="text-[11px] uppercase tracking-wider text-blue-200 font-semibold">Longitudinal Status</div>
-                        <div className="text-2xl font-black text-amber-300 mt-0.5">{reports.length >= 2 ? 'Active Delta' : 'Need 2 Reports'}</div>
-                    </div>
-                </div>
-
-                <div className="absolute right-0 top-0 translate-x-1/4 -translate-y-1/4 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"></div>
             </div>
 
-            {/* Notification messages */}
-            {successMsg && (
-                <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 px-4 py-3 rounded-xl text-sm font-medium flex items-center justify-between shadow-sm animate-fade-in">
-                    <span className="flex items-center gap-2">✅ {successMsg}</span>
-                    <button onClick={() => setSuccessMsg('')} className="text-emerald-600 hover:text-emerald-900 font-bold">✕</button>
-                </div>
-            )}
-
-            {error && (
-                <div className="bg-red-50 border border-red-300 text-red-800 px-4 py-3 rounded-xl text-sm font-medium flex items-center justify-between shadow-sm animate-fade-in">
-                    <span className="flex items-center gap-2">⚠️ {error}</span>
-                    <button onClick={() => setError('')} className="text-red-600 hover:text-red-900 font-bold">✕</button>
-                </div>
-            )}
-
-            {/* Main Content Grid */}
-            <div className="grid lg:grid-cols-3 gap-8">
-                {/* Upload Form Card */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-1 h-fit space-y-5">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                            <span>📤</span> Upload Clinical Report
-                        </h2>
-                        <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">PDF format</span>
+            {/* Main Content Workspace */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+                {/* Notification banners */}
+                {successMsg && (
+                    <div className="bg-emerald-50 border-l-4 border-emerald-600 text-emerald-900 px-4 py-3 text-sm font-medium flex items-center justify-between shadow-xs">
+                        <span>{successMsg}</span>
+                        <button onClick={() => setSuccessMsg('')} className="text-emerald-700 hover:text-emerald-900 font-bold ml-4">✕</button>
                     </div>
+                )}
 
-                    <form onSubmit={handleUpload} className="space-y-4">
-                        {/* Step 1: Category Picker */}
-                        <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
-                                1. Report Category
-                            </label>
-                            <div className="grid grid-cols-2 gap-2">
-                                {REPORT_CATEGORIES.map(cat => (
-                                    <button
-                                        type="button"
-                                        key={cat.id}
-                                        onClick={() => handleCategoryChange(cat.id)}
-                                        className={`p-2.5 rounded-xl border text-left transition flex items-center gap-2 cursor-pointer ${
-                                            selectedCategory === cat.id
-                                                ? 'border-blue-600 bg-blue-50/80 text-blue-900 font-bold shadow-xs'
-                                                : 'border-slate-200 bg-slate-50/50 hover:bg-slate-100 text-slate-700 font-medium'
-                                        }`}
-                                    >
-                                        <span className="text-lg">{cat.icon}</span>
-                                        <div className="truncate text-xs leading-tight">
-                                            {cat.name.split(' ')[0]}
-                                        </div>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                {error && (
+                    <div className="bg-red-50 border-l-4 border-red-600 text-red-900 px-4 py-3 text-sm font-medium flex items-center justify-between shadow-xs">
+                        <span>{error}</span>
+                        <button onClick={() => setError('')} className="text-red-700 hover:text-red-900 font-bold ml-4">✕</button>
+                    </div>
+                )}
 
-                        {/* Step 2: Specialized Sub-Type Selector */}
-                        <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
-                                2. Specific Report Type
-                            </label>
-                            <select
-                                value={reportType}
-                                onChange={e => setReportType(e.target.value)}
-                                className="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm font-semibold bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                            >
-                                {activeCatObj.types.map(t => (
-                                    <option key={t.value} value={t.value}>
-                                        {t.icon} {t.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        {/* Step 3: Drag and Drop PDF Zone */}
-                        <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
-                                3. Medical PDF Document
-                            </label>
-                            <div
-                                onDragEnter={handleDrag}
-                                onDragLeave={handleDrag}
-                                onDragOver={handleDrag}
-                                onDrop={handleDrop}
-                                className={`border-2 border-dashed rounded-xl p-5 text-center transition-all cursor-pointer ${
-                                    dragActive
-                                        ? 'border-blue-500 bg-blue-50/80 scale-102'
-                                        : file
-                                            ? 'border-emerald-400 bg-emerald-50/40'
-                                            : 'border-slate-300 bg-slate-50 hover:bg-slate-100/80'
-                                }`}
-                                onClick={() => document.getElementById('file-upload').click()}
-                            >
-                                <input
-                                    id="file-upload"
-                                    type="file"
-                                    accept="application/pdf"
-                                    onChange={e => {
-                                        if (e.target.files && e.target.files[0]) {
-                                            setFile(e.target.files[0]);
-                                            setError('');
-                                        }
-                                    }}
-                                    className="hidden"
-                                />
-                                {file ? (
-                                    <div className="space-y-1">
-                                        <div className="text-2xl">📄</div>
-                                        <div className="text-xs font-bold text-slate-800 truncate max-w-[200px] mx-auto">{file.name}</div>
-                                        <div className="text-[10px] text-emerald-600 font-semibold">Ready to parse ({(file.size / 1024).toFixed(1)} KB)</div>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-1">
-                                        <div className="text-2xl">{activeCatObj.icon}</div>
-                                        <div className="text-xs font-semibold text-slate-700">Drag & drop your {activeCatObj.name.toLowerCase()} PDF</div>
-                                        <div className="text-[11px] text-blue-600 font-bold hover:underline">or browse from device</div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Clinical Notes (Optional)</label>
-                            <textarea
-                                value={notes}
-                                onChange={e => setNotes(e.target.value)}
-                                rows="2"
-                                className="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                                placeholder="e.g. Mild persistent cough for 2 weeks; right thyroid nodule follow-up..."
-                            ></textarea>
-                        </div>
-
-                        {isUploading && uploadProgress > 0 && (
-                            <div className="space-y-1.5">
-                                <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
-                                    <div className="bg-blue-600 h-2 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
-                                </div>
-                                <div className="text-[11px] text-slate-500 text-center font-medium">Extracting text & running Gemini analysis...</div>
-                            </div>
-                        )}
-
-                        <button
-                            type="submit"
-                            disabled={isUploading}
-                            className={`w-full py-3 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer ${
-                                isUploading ? 'bg-slate-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800'
-                            }`}
-                        >
-                            {isUploading ? (
-                                <>
-                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                    <span>Processing Report...</span>
-                                </>
-                            ) : (
-                                <span>Upload & Generate AI Insights</span>
-                            )}
-                        </button>
-                    </form>
-                </div>
-
-                {/* Reports Management Table */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 space-y-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                <span>📚</span> Medical Records Library ({reports.length})
+                <div className="grid lg:grid-cols-3 gap-8">
+                    {/* Upload Card */}
+                    <div className="bg-white p-6 rounded border border-slate-200 shadow-xs lg:col-span-1 h-fit space-y-5">
+                        <div className="border-b border-slate-200 pb-3">
+                            <h2 className="text-base font-bold text-[#0F172A]">
+                                Upload Clinical Document
                             </h2>
-                            <p className="text-xs text-slate-500">Organized by clinical category with semantic vector search</p>
+                            <p className="text-xs text-slate-500 mt-0.5">Select clinical category and upload PDF report</p>
                         </div>
-                        
-                        {/* Semantic Search Bar */}
-                        <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={e => setSearchQuery(e.target.value)}
-                                placeholder="Search (e.g. chest, thyroid, glucose)..."
-                                className="border border-slate-300 rounded-xl px-3.5 py-1.5 text-xs sm:text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white w-full md:w-60"
-                            />
+
+                        <form onSubmit={handleUpload} className="space-y-4">
+                            {/* Category Selector */}
+                            <div>
+                                <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-2">
+                                    1. Clinical Domain
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {REPORT_CATEGORIES.map(cat => (
+                                        <button
+                                            type="button"
+                                            key={cat.id}
+                                            onClick={() => handleCategoryChange(cat.id)}
+                                            className={`p-2.5 rounded border text-left text-xs transition cursor-pointer ${
+                                                selectedCategory === cat.id
+                                                    ? 'border-[#1C355E] bg-[#1C355E] text-white font-semibold shadow-xs'
+                                                    : 'border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-medium'
+                                            }`}
+                                        >
+                                            <div className="truncate font-semibold">{cat.name.split(' ')[0]}</div>
+                                            <div className={`text-[10px] truncate ${selectedCategory === cat.id ? 'text-slate-200' : 'text-slate-400'}`}>
+                                                {cat.id === 'LABORATORY' ? 'Blood/Urine' : cat.id === 'RADIOLOGY' ? 'Imaging/Scans' : cat.id === 'PATHOLOGY' ? 'Biopsies' : 'Summaries'}
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sub-type dropdown */}
+                            <div>
+                                <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
+                                    2. Report Classification
+                                </label>
+                                <select
+                                    value={reportType}
+                                    onChange={e => setReportType(e.target.value)}
+                                    className="w-full border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm font-medium bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                >
+                                    {activeCatObj.types.map(t => (
+                                        <option key={t.value} value={t.value}>
+                                            {t.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Drag and Drop Zone */}
+                            <div>
+                                <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
+                                    3. Select Document (PDF)
+                                </label>
+                                <div
+                                    onDragEnter={handleDrag}
+                                    onDragLeave={handleDrag}
+                                    onDragOver={handleDrag}
+                                    onDrop={handleDrop}
+                                    className={`border-2 border-dashed rounded p-5 text-center transition cursor-pointer ${
+                                        dragActive
+                                            ? 'border-[#1C355E] bg-blue-50/50'
+                                            : file
+                                                ? 'border-emerald-600 bg-emerald-50/30'
+                                                : 'border-slate-300 bg-slate-50 hover:bg-slate-100'
+                                    }`}
+                                    onClick={() => document.getElementById('file-upload').click()}
+                                >
+                                    <input
+                                        id="file-upload"
+                                        type="file"
+                                        accept="application/pdf"
+                                        onChange={e => {
+                                            if (e.target.files && e.target.files[0]) {
+                                                setFile(e.target.files[0]);
+                                                setError('');
+                                            }
+                                        }}
+                                        className="hidden"
+                                    />
+                                    {file ? (
+                                        <div className="space-y-1">
+                                            <div className="text-xs font-bold text-slate-800 truncate max-w-[220px] mx-auto">{file.name}</div>
+                                            <div className="text-[11px] text-emerald-700 font-medium">Document attached ({(file.size / 1024).toFixed(1)} KB)</div>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-1">
+                                            <div className="text-xs font-semibold text-slate-700">Drag and drop PDF report here</div>
+                                            <div className="text-[11px] text-[#026CB6] font-medium hover:underline">or click to browse files</div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Clinical Notes */}
+                            <div>
+                                <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">
+                                    Clinical Indications / Notes (Optional)
+                                </label>
+                                <textarea
+                                    value={notes}
+                                    onChange={e => setNotes(e.target.value)}
+                                    rows="2"
+                                    className="w-full border border-slate-300 rounded px-3 py-2 text-xs sm:text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                    placeholder="Enter clinical symptoms, ordering doctor instructions, or context..."
+                                ></textarea>
+                            </div>
+
+                            {isUploading && uploadProgress > 0 && (
+                                <div className="space-y-1.5">
+                                    <div className="w-full bg-slate-200 rounded h-1.5 overflow-hidden">
+                                        <div className="bg-[#1C355E] h-1.5 transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                                    </div>
+                                    <div className="text-[11px] text-slate-500 text-center font-medium">Processing optical extraction & clinical analysis...</div>
+                                </div>
+                            )}
+
                             <button
                                 type="submit"
-                                className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition cursor-pointer"
+                                disabled={isUploading}
+                                className={`w-full py-2.5 text-white font-semibold rounded text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer shadow-xs ${
+                                    isUploading ? 'bg-slate-400 cursor-not-allowed' : 'bg-[#1C355E] hover:bg-[#15294A]'
+                                }`}
                             >
-                                Search
+                                {isUploading ? 'Analyzing Document...' : 'Upload & Generate Clinical Summary'}
                             </button>
-                            {isSearching && (
-                                <button
-                                    type="button"
-                                    onClick={handleClearSearch}
-                                    className="text-slate-400 hover:text-slate-600 text-xs px-2 cursor-pointer font-bold"
-                                >
-                                    ✕
-                                </button>
-                            )}
                         </form>
                     </div>
 
-                    {/* Category Filter Tabs */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs border-b border-slate-200">
-                        <button
-                            onClick={() => setActiveTabCategory('ALL')}
-                            className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer ${
-                                activeTabCategory === 'ALL'
-                                    ? 'bg-blue-600 text-white shadow-xs'
-                                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                        >
-                            All Records ({reports.length})
-                        </button>
-                        {REPORT_CATEGORIES.map(cat => {
-                            const count = reports.filter(r => getReportCategory(r.reportType || r.category).id === cat.id).length;
-                            return (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setActiveTabCategory(cat.id)}
-                                    className={`px-3 py-1.5 rounded-lg font-bold transition whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                                        activeTabCategory === cat.id
-                                            ? 'bg-blue-600 text-white shadow-xs'
-                                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                    }`}
-                                >
-                                    <span>{cat.icon}</span>
-                                    <span>{cat.name.split(' ')[0]}</span>
-                                    <span className="text-[10px] opacity-75">({count})</span>
-                                </button>
-                            );
-                        })}
-                    </div>
-
-                    {/* Semantic Search Results Banner */}
-                    {searchResults.length > 0 && (
-                        <div className="bg-indigo-50/80 border border-indigo-200 rounded-2xl p-4 space-y-3 animate-fade-in">
-                            <div className="flex items-center justify-between">
-                                <h3 className="font-bold text-indigo-900 text-xs sm:text-sm flex items-center gap-1.5">
-                                    🔍 Semantic Search Matches ({searchResults.length})
-                                </h3>
-                                <button
-                                    onClick={handleClearSearch}
-                                    className="text-xs text-indigo-600 hover:text-indigo-900 font-bold"
-                                >
-                                    Clear Filter
-                                </button>
+                    {/* Reports Table & Repository */}
+                    <div className="bg-white p-6 rounded border border-slate-200 shadow-xs lg:col-span-2 space-y-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+                            <div>
+                                <h2 className="text-base font-bold text-[#0F172A]">
+                                    Clinical Document Repository ({reports.length})
+                                </h2>
+                                <p className="text-xs text-slate-500">Verified medical records catalogued with semantic vector indexing</p>
                             </div>
-                            <div className="space-y-2.5">
-                                {searchResults.map((res, index) => (
-                                    <div key={index} className="bg-white p-3.5 rounded-xl border border-indigo-100 shadow-sm flex flex-col sm:flex-row justify-between gap-2 sm:items-center">
-                                        <div className="flex-1">
-                                            <div className="text-xs font-bold text-indigo-700 flex items-center gap-2">
-                                                <span>{getReportTypeLabel(res.reportType)}</span>
-                                                <span className="text-slate-300">•</span>
-                                                <span className="text-slate-500 font-normal">{new Date(res.uploadedAt).toLocaleDateString()}</span>
-                                            </div>
-                                            <p className="text-xs text-slate-700 mt-1 italic font-medium leading-relaxed">
-                                                "{res.snippet}"
-                                            </p>
-                                        </div>
-                                        <button
-                                            onClick={() => handleViewSummary(res.reportId, `Report #${res.reportId}`, res.reportType)}
-                                            className="text-blue-600 hover:text-blue-800 text-xs font-bold bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer self-start sm:self-center"
-                                        >
-                                            View AI Summary
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Reports Table */}
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-slate-200">
-                            <thead className="bg-slate-50">
-                                <tr>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Date</th>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Type & Domain</th>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Document Name</th>
-                                    <th className="py-3 px-3 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">AI Insights</th>
-                                    <th className="py-3 px-3 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {filteredReports.length === 0 ? (
-                                    <tr>
-                                        <td colSpan="5" className="py-12 text-center text-slate-400">
-                                            <div className="text-3xl mb-2">📄</div>
-                                            <p className="text-sm font-semibold text-slate-600">No medical reports found in this category.</p>
-                                            <p className="text-xs text-slate-400 mt-1">Upload a report or click "Load 5 Multi-Domain Reports".</p>
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    filteredReports.map(report => {
-                                        const cat = getReportCategory(report.reportType || report.category);
-                                        return (
-                                            <tr key={report.id} className="hover:bg-slate-50/80 transition">
-                                                <td className="py-3.5 px-3 text-xs text-slate-600 whitespace-nowrap font-medium">
-                                                    {new Date(report.uploadedAt).toLocaleDateString(undefined, {
-                                                        year: 'numeric',
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    })}
-                                                </td>
-                                                <td className="py-3.5 px-3 text-xs font-bold whitespace-nowrap">
-                                                    <span className={`px-2.5 py-1 rounded-lg border font-semibold inline-flex items-center gap-1.5 ${cat.badgeColor}`}>
-                                                        <span>{getReportTypeLabel(report.reportType)}</span>
-                                                    </span>
-                                                </td>
-                                                <td className="py-3.5 px-3 text-xs text-slate-700 font-medium truncate max-w-[140px]" title={report.fileName}>
-                                                    {report.fileName}
-                                                </td>
-                                                <td className="py-3.5 px-3 text-xs whitespace-nowrap">
-                                                    <span className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-bold">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                        Tailored AI
-                                                    </span>
-                                                </td>
-                                                <td className="py-3.5 px-3 text-xs font-medium text-right space-x-2 whitespace-nowrap">
-                                                    <button
-                                                        onClick={() => handleViewSummary(report.id, report.fileName, report.reportType)}
-                                                        className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200 font-bold transition cursor-pointer"
-                                                    >
-                                                        AI Insights
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDownload(report.id, report.fileName)}
-                                                        className="text-slate-600 hover:text-slate-900 px-2 py-1 transition cursor-pointer"
-                                                        title="Download Report"
-                                                    >
-                                                        ⬇
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(report.id)}
-                                                        className="text-red-500 hover:text-red-700 px-2 py-1 transition cursor-pointer"
-                                                        title="Delete Report"
-                                                    >
-                                                        🗑
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })
+                            
+                            {/* Search bar */}
+                            <form onSubmit={handleSearch} className="flex gap-2 w-full md:w-auto">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={e => setSearchQuery(e.target.value)}
+                                    placeholder="Search keywords (e.g. chest, thyroid)..."
+                                    className="border border-slate-300 rounded px-3 py-1.5 text-xs sm:text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E] w-full md:w-56"
+                                />
+                                <button
+                                    type="submit"
+                                    className="bg-[#1C355E] hover:bg-[#15294A] text-white font-medium text-xs px-3.5 py-1.5 rounded transition cursor-pointer"
+                                >
+                                    Search
+                                </button>
+                                {isSearching && (
+                                    <button
+                                        type="button"
+                                        onClick={handleClearSearch}
+                                        className="text-slate-400 hover:text-slate-700 text-xs px-2 cursor-pointer font-bold"
+                                    >
+                                        ✕
+                                    </button>
                                 )}
-                            </tbody>
-                        </table>
+                            </form>
+                        </div>
+
+                        {/* Category Navigation Filter Tabs */}
+                        <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs border-b border-slate-200">
+                            <button
+                                onClick={() => setActiveTabCategory('ALL')}
+                                className={`px-3 py-2 font-semibold transition whitespace-nowrap cursor-pointer border-b-2 ${
+                                    activeTabCategory === 'ALL'
+                                        ? 'border-[#1C355E] text-[#1C355E]'
+                                        : 'border-transparent text-slate-500 hover:text-slate-800'
+                                }`}
+                            >
+                                All Records ({reports.length})
+                            </button>
+                            {REPORT_CATEGORIES.map(cat => {
+                                const count = reports.filter(r => getReportCategory(r.reportType || r.category).id === cat.id).length;
+                                return (
+                                    <button
+                                        key={cat.id}
+                                        onClick={() => setActiveTabCategory(cat.id)}
+                                        className={`px-3 py-2 font-semibold transition whitespace-nowrap cursor-pointer border-b-2 ${
+                                            activeTabCategory === cat.id
+                                                ? 'border-[#1C355E] text-[#1C355E]'
+                                                : 'border-transparent text-slate-500 hover:text-slate-800'
+                                        }`}
+                                    >
+                                        <span>{cat.name.split(' ')[0]}</span>
+                                        <span className="text-[11px] font-normal text-slate-400 ml-1">({count})</span>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Semantic Search Results Banner */}
+                        {searchResults.length > 0 && (
+                            <div className="bg-slate-50 border border-slate-300 rounded p-4 space-y-3">
+                                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                                    <h3 className="font-bold text-[#0F172A] text-xs uppercase tracking-wider">
+                                        Semantic Search Matches ({searchResults.length})
+                                    </h3>
+                                    <button
+                                        onClick={handleClearSearch}
+                                        className="text-xs text-[#026CB6] hover:underline font-semibold"
+                                    >
+                                        Clear Search
+                                    </button>
+                                </div>
+                                <div className="space-y-2.5">
+                                    {searchResults.map((res, index) => (
+                                        <div key={index} className="bg-white p-3 rounded border border-slate-200 flex flex-col sm:flex-row justify-between gap-2 sm:items-center">
+                                            <div className="flex-1">
+                                                <div className="text-xs font-semibold text-slate-700">
+                                                    <span>{getReportTypeLabel(res.reportType)}</span>
+                                                    <span className="text-slate-400 mx-1.5">•</span>
+                                                    <span className="text-slate-500">{new Date(res.uploadedAt).toLocaleDateString()}</span>
+                                                </div>
+                                                <p className="text-xs text-slate-600 mt-1 italic leading-relaxed">
+                                                    "{res.snippet}"
+                                                </p>
+                                            </div>
+                                            <button
+                                                onClick={() => handleViewSummary(res.reportId, `Report #${res.reportId}`, res.reportType)}
+                                                className="text-[#026CB6] hover:text-[#004A80] text-xs font-semibold px-2.5 py-1 rounded border border-slate-300 hover:bg-slate-50 transition cursor-pointer self-start sm:self-center"
+                                            >
+                                                View Summary
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Reports Table */}
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full divide-y divide-slate-200 text-left">
+                                <thead className="bg-slate-50">
+                                    <tr>
+                                        <th className="py-2.5 px-3 text-xs font-bold text-slate-700 uppercase tracking-wider">Date</th>
+                                        <th className="py-2.5 px-3 text-xs font-bold text-slate-700 uppercase tracking-wider">Classification</th>
+                                        <th className="py-2.5 px-3 text-xs font-bold text-slate-700 uppercase tracking-wider">Document Name</th>
+                                        <th className="py-2.5 px-3 text-xs font-bold text-slate-700 uppercase tracking-wider">Status</th>
+                                        <th className="py-2.5 px-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-200">
+                                    {filteredReports.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="5" className="py-12 text-center text-slate-500">
+                                                <p className="text-sm font-medium">No clinical documents found in this category.</p>
+                                                <p className="text-xs text-slate-400 mt-1">Upload a PDF or click "Load Sample Clinical Bundle".</p>
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredReports.map(report => {
+                                            const cat = getReportCategory(report.reportType || report.category);
+                                            return (
+                                                <tr key={report.id} className="hover:bg-slate-50 transition">
+                                                    <td className="py-3 px-3 text-xs text-slate-600 whitespace-nowrap">
+                                                        {new Date(report.uploadedAt).toLocaleDateString(undefined, {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </td>
+                                                    <td className="py-3 px-3 text-xs font-semibold whitespace-nowrap">
+                                                        <span className="bg-slate-100 text-slate-800 border border-slate-300 px-2 py-0.5 rounded text-[11px]">
+                                                            {getReportTypeLabel(report.reportType)}
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3 px-3 text-xs text-slate-700 font-medium truncate max-w-[160px]" title={report.fileName}>
+                                                        {report.fileName}
+                                                    </td>
+                                                    <td className="py-3 px-3 text-xs whitespace-nowrap">
+                                                        <span className="inline-flex items-center gap-1.5 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded font-medium">
+                                                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                                                            Analyzed
+                                                        </span>
+                                                    </td>
+                                                    <td className="py-3 px-3 text-xs font-medium text-right space-x-2 whitespace-nowrap">
+                                                        <button
+                                                            onClick={() => handleViewSummary(report.id, report.fileName, report.reportType)}
+                                                            className="text-[#026CB6] hover:text-[#004A80] hover:underline font-semibold cursor-pointer"
+                                                        >
+                                                            View Summary
+                                                        </button>
+                                                        <span className="text-slate-300">|</span>
+                                                        <button
+                                                            onClick={() => handleDownload(report.id, report.fileName)}
+                                                            className="text-slate-600 hover:text-slate-900 cursor-pointer"
+                                                            title="Download File"
+                                                        >
+                                                            Download
+                                                        </button>
+                                                        <span className="text-slate-300">|</span>
+                                                        <button
+                                                            onClick={() => handleDelete(report.id)}
+                                                            className="text-red-600 hover:text-red-800 cursor-pointer"
+                                                            title="Delete Record"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* AI Medical Summary & Clinical Insights Modal */}
+            {/* AI Medical Summary & Clinical Insights Modal (Institutional Clean Style) */}
             {isSummaryModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] flex flex-col border border-slate-200">
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fade-in">
+                    <div className="bg-white rounded max-w-3xl w-full p-6 sm:p-8 shadow-xl relative max-h-[90vh] flex flex-col border border-slate-300">
                         {/* Modal Header */}
                         <div className="flex items-start justify-between pb-4 border-b border-slate-200">
                             <div>
-                                <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider">
+                                <div className="text-[11px] font-bold text-[#1C355E] uppercase tracking-wider">
                                     {getReportTypeLabel(selectedReportType)}
-                                </span>
-                                <h3 className="text-xl font-extrabold text-slate-900 mt-0.5">
+                                </div>
+                                <h3 className="text-xl font-bold text-[#0F172A] mt-0.5">
                                     {selectedReportName}
                                 </h3>
                             </div>
                             <button
                                 onClick={() => setIsSummaryModalOpen(false)}
-                                className="text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 rounded-lg focus:outline-none cursor-pointer"
+                                className="text-slate-400 hover:text-slate-700 text-xl font-bold p-1 focus:outline-none cursor-pointer"
                             >
                                 ✕
                             </button>
                         </div>
 
                         {/* Modal Body */}
-                        <div className="flex-1 overflow-y-auto py-5 space-y-6 text-sm text-slate-700 leading-relaxed pr-2">
+                        <div className="flex-1 overflow-y-auto py-5 space-y-6 text-sm text-slate-800 leading-relaxed pr-2">
                             {isSummaryLoading ? (
                                 <div className="flex flex-col items-center justify-center py-16 space-y-4">
-                                    <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                                    <span className="text-slate-500 font-semibold text-sm">Generating tailored clinical AI insights...</span>
+                                    <div className="w-8 h-8 border-3 border-[#1C355E] border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="text-slate-600 font-medium text-sm">Generating clinical report summary...</span>
                                 </div>
                             ) : (
                                 <>
-                                    {/* Markdown formatted summary */}
-                                    <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-3">
+                                    {/* Formatted summary */}
+                                    <div className="bg-slate-50 p-5 rounded border border-slate-200 space-y-3">
                                         <div className="prose prose-sm max-w-none whitespace-pre-line text-slate-800 font-normal">
                                             {selectedReportSummary || "Summary not available"}
                                         </div>
@@ -669,13 +665,13 @@ const PatientDashboard = () => {
                         <div className="pt-4 border-t border-slate-200 flex items-center justify-between gap-3">
                             <button
                                 onClick={handleCopyToClipboard}
-                                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl border border-slate-300 transition flex items-center gap-1.5 cursor-pointer"
+                                className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold rounded border border-slate-300 transition flex items-center gap-1.5 cursor-pointer"
                             >
-                                <span>{copied ? '✅ Copied!' : '📋 Copy Clinical Insights'}</span>
+                                <span>{copied ? 'Copied to Clipboard' : 'Copy Summary'}</span>
                             </button>
                             <button
                                 onClick={() => setIsSummaryModalOpen(false)}
-                                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-sm cursor-pointer"
+                                className="px-6 py-2 bg-[#1C355E] hover:bg-[#15294A] text-white text-xs font-semibold rounded transition cursor-pointer"
                             >
                                 Close
                             </button>

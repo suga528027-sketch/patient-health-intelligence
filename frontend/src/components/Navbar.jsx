@@ -13,77 +13,73 @@ const Navbar = () => {
     };
 
     const navLinkClasses = ({ isActive }) =>
-        `px-3 py-2 rounded-lg text-sm font-medium transition ${
+        `px-4 py-2 text-sm font-medium transition border-b-2 ${
             isActive
-                ? 'bg-blue-700 text-white shadow-inner font-semibold'
-                : 'text-blue-100 hover:bg-blue-600/80 hover:text-white'
+                ? 'border-white text-white font-semibold bg-white/10'
+                : 'border-transparent text-slate-200 hover:text-white hover:bg-white/5'
         }`;
 
     return (
-        <nav className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 text-white shadow-lg sticky top-0 z-40">
+        <header className="bg-[#1C355E] text-white shadow-sm sticky top-0 z-40 border-b border-[#15294a]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    {/* Brand Logo */}
-                    <div className="flex items-center gap-3">
-                        <Link to="/" className="flex items-center gap-2.5 group">
-                            <div className="w-9 h-9 rounded-xl bg-white text-blue-600 flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
-                                🏥
+                    {/* Brand Logo & Institutional Title */}
+                    <div className="flex items-center gap-4">
+                        <Link to="/" className="flex items-center gap-3 group">
+                            <div className="w-8 h-8 rounded bg-white text-[#1C355E] flex items-center justify-center font-bold text-lg shadow-sm">
+                                +
                             </div>
-                            <div>
-                                <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white">HealthPlatform</span>
-                                <span className="hidden sm:inline-block ml-2 text-[10px] bg-blue-500/40 text-blue-100 border border-blue-400/40 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                                    AI Assistant
+                            <div className="flex flex-col">
+                                <span className="font-bold text-lg sm:text-xl tracking-tight text-white leading-tight">
+                                    HealthPlatform
+                                </span>
+                                <span className="text-[10px] text-slate-300 tracking-wider uppercase font-semibold">
+                                    Clinical Intelligence System
                                 </span>
                             </div>
                         </Link>
                     </div>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
+                    <div className="hidden md:flex items-center space-x-1">
                         {isAuthenticated ? (
                             <>
                                 <NavLink to="/patient/dashboard" className={navLinkClasses}>
-                                    📊 Dashboard
+                                    Dashboard
                                 </NavLink>
                                 <NavLink to="/patient/timeline" className={navLinkClasses}>
-                                    📅 Timeline
+                                    Timeline
                                 </NavLink>
                                 <NavLink to="/patient/trends" className={navLinkClasses}>
-                                    📈 Trends
+                                    Biomarker Trends
                                 </NavLink>
                                 <NavLink to="/patient/assistant" className={navLinkClasses}>
-                                    🤖 AI Assistant
+                                    Clinical AI Assistant
                                 </NavLink>
 
-                                {/* Demo / Live Mode Pill */}
+                                {/* Demo / Live Mode Status */}
                                 <button
                                     onClick={() => toggleDemoMode()}
-                                    title={isDemoMode ? "Click to switch to Live Backend" : "Click to switch to Interactive Demo Mode"}
-                                    className={`ml-2 text-xs font-semibold px-2.5 py-1 rounded-full border transition flex items-center gap-1.5 cursor-pointer ${
-                                        isDemoMode
-                                            ? 'bg-amber-500/20 text-amber-200 border-amber-400/40 hover:bg-amber-500/30'
-                                            : backendOnline
-                                                ? 'bg-emerald-500/20 text-emerald-200 border-emerald-400/40 hover:bg-emerald-500/30'
-                                                : 'bg-red-500/20 text-red-200 border-red-400/40'
-                                    }`}
+                                    title={isDemoMode ? "Click to switch to Live API Mode" : "Click to switch to Demo Mode"}
+                                    className="ml-3 text-xs font-medium px-3 py-1 rounded border border-white/20 bg-white/10 text-slate-100 hover:bg-white/20 transition flex items-center gap-2 cursor-pointer"
                                 >
                                     <span className={`w-2 h-2 rounded-full ${
-                                        isDemoMode ? 'bg-amber-300' : backendOnline ? 'bg-emerald-400' : 'bg-red-400'
+                                        isDemoMode ? 'bg-amber-400' : backendOnline ? 'bg-emerald-400' : 'bg-red-400'
                                     }`}></span>
-                                    <span>{isDemoMode ? 'Demo Mode' : backendOnline ? 'Live API' : 'Backend Offline'}</span>
+                                    <span>{isDemoMode ? 'Demo Workspace' : backendOnline ? 'Live API' : 'Backend Offline'}</span>
                                 </button>
 
                                 {/* User & Logout */}
-                                <div className="flex items-center gap-3 pl-3 border-l border-blue-500/50">
+                                <div className="flex items-center gap-3 pl-4 ml-2 border-l border-white/20">
                                     <div className="text-right hidden lg:block">
-                                        <div className="text-xs font-bold leading-tight">{user.name}</div>
-                                        <div className="text-[10px] text-blue-200 leading-tight truncate max-w-[120px]">{user.email}</div>
+                                        <div className="text-xs font-semibold text-white leading-tight">{user.name}</div>
+                                        <div className="text-[10px] text-slate-300 leading-tight truncate max-w-[130px]">{user.email}</div>
                                     </div>
                                     <button
                                         onClick={handleLogout}
-                                        className="bg-blue-800/80 hover:bg-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-blue-400/30 transition shadow-sm cursor-pointer"
+                                        className="bg-transparent hover:bg-white/10 text-slate-200 hover:text-white text-xs font-medium px-3 py-1.5 rounded border border-white/30 transition cursor-pointer"
                                     >
-                                        Logout
+                                        Sign Out
                                     </button>
                                 </div>
                             </>
@@ -91,17 +87,17 @@ const Navbar = () => {
                             <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => toggleDemoMode()}
-                                    className="text-xs font-semibold px-2.5 py-1 rounded-full border bg-white/10 text-blue-100 border-white/20 hover:bg-white/20 transition flex items-center gap-1.5 cursor-pointer"
+                                    className="text-xs font-medium px-3 py-1 rounded border border-white/20 bg-white/10 text-slate-100 hover:bg-white/20 transition flex items-center gap-2 cursor-pointer"
                                 >
-                                    <span className={`w-2 h-2 rounded-full ${backendOnline ? 'bg-emerald-400' : 'bg-amber-300'}`}></span>
-                                    <span>{backendOnline ? 'Live API Connected' : 'Demo Ready'}</span>
+                                    <span className={`w-2 h-2 rounded-full ${backendOnline ? 'bg-emerald-400' : 'bg-amber-400'}`}></span>
+                                    <span>{backendOnline ? 'Live API Connected' : 'Demo Mode Ready'}</span>
                                 </button>
-                                <Link to="/login" className="text-sm text-blue-100 hover:text-white px-3 py-2 font-semibold transition">
+                                <Link to="/login" className="text-sm text-slate-200 hover:text-white px-3 py-2 font-medium transition">
                                     Sign In
                                 </Link>
                                 <Link
                                     to="/register"
-                                    className="text-sm bg-white text-blue-700 hover:bg-blue-50 font-bold px-4 py-2 rounded-lg shadow-sm transition"
+                                    className="text-sm bg-white text-[#1C355E] hover:bg-slate-100 font-semibold px-4 py-1.5 rounded transition shadow-sm"
                                 >
                                     Register
                                 </Link>
@@ -113,7 +109,7 @@ const Navbar = () => {
                     <div className="md:hidden flex items-center gap-2">
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="p-2 rounded-lg bg-blue-800/60 hover:bg-blue-800 text-white focus:outline-none"
+                            className="p-2 rounded bg-white/10 hover:bg-white/20 text-white focus:outline-none"
                             aria-label="Toggle menu"
                         >
                             <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>
@@ -124,42 +120,42 @@ const Navbar = () => {
 
             {/* Mobile Navigation Drawer */}
             {mobileMenuOpen && (
-                <div className="md:hidden bg-blue-800 border-t border-blue-600 px-4 pt-2 pb-4 space-y-2">
+                <div className="md:hidden bg-[#15294A] border-t border-white/10 px-4 pt-2 pb-4 space-y-2">
                     {isAuthenticated ? (
                         <>
-                            <div className="pb-2 mb-2 border-b border-blue-700 flex justify-between items-center">
+                            <div className="pb-2 mb-2 border-b border-white/10 flex justify-between items-center">
                                 <div>
-                                    <div className="text-sm font-bold">{user.name}</div>
-                                    <div className="text-xs text-blue-200">{user.email}</div>
+                                    <div className="text-sm font-semibold text-white">{user.name}</div>
+                                    <div className="text-xs text-slate-300">{user.email}</div>
                                 </div>
-                                <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${isDemoMode ? 'bg-amber-400 text-amber-950' : 'bg-emerald-400 text-emerald-950'}`}>
+                                <span className={`text-[11px] px-2 py-0.5 rounded font-semibold ${isDemoMode ? 'bg-amber-100 text-amber-900' : 'bg-emerald-100 text-emerald-900'}`}>
                                     {isDemoMode ? 'Demo Mode' : 'Live API'}
                                 </span>
                             </div>
                             <NavLink to="/patient/dashboard" onClick={() => setMobileMenuOpen(false)} className={navLinkClasses}>
-                                📊 Dashboard
+                                Dashboard
                             </NavLink>
                             <NavLink to="/patient/timeline" onClick={() => setMobileMenuOpen(false)} className={navLinkClasses}>
-                                📅 Timeline
+                                Timeline
                             </NavLink>
                             <NavLink to="/patient/trends" onClick={() => setMobileMenuOpen(false)} className={navLinkClasses}>
-                                📈 Trends
+                                Biomarker Trends
                             </NavLink>
                             <NavLink to="/patient/assistant" onClick={() => setMobileMenuOpen(false)} className={navLinkClasses}>
-                                🤖 AI Assistant
+                                Clinical AI Assistant
                             </NavLink>
-                            <div className="pt-2 border-t border-blue-700 flex gap-2">
+                            <div className="pt-2 border-t border-white/10 flex gap-2">
                                 <button
                                     onClick={() => { toggleDemoMode(); setMobileMenuOpen(false); }}
-                                    className="flex-1 text-xs py-2 bg-blue-900 rounded font-semibold text-center"
+                                    className="flex-1 text-xs py-2 bg-white/10 rounded font-medium text-center text-white"
                                 >
                                     Toggle {isDemoMode ? 'Live Mode' : 'Demo Mode'}
                                 </button>
                                 <button
                                     onClick={handleLogout}
-                                    className="flex-1 text-xs py-2 bg-red-600 rounded font-semibold text-center"
+                                    className="flex-1 text-xs py-2 bg-red-700 hover:bg-red-800 rounded font-medium text-center text-white"
                                 >
-                                    Logout
+                                    Sign Out
                                 </button>
                             </div>
                         </>
@@ -168,22 +164,22 @@ const Navbar = () => {
                             <Link
                                 to="/login"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block text-center py-2 bg-blue-700 rounded-lg font-semibold"
+                                className="block text-center py-2 bg-white/10 text-white rounded font-medium"
                             >
                                 Sign In
                             </Link>
                             <Link
                                 to="/register"
                                 onClick={() => setMobileMenuOpen(false)}
-                                className="block text-center py-2 bg-white text-blue-700 rounded-lg font-bold"
+                                className="block text-center py-2 bg-white text-[#1C355E] rounded font-semibold"
                             >
-                                Register Free
+                                Register
                             </Link>
                         </div>
                     )}
                 </div>
             )}
-        </nav>
+        </header>
     );
 };
 

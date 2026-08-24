@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -8,19 +7,19 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login, loginAsDemo, backendOnline } = useAuth();
+    const { login, loginAsDemo } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
         setLoading(true);
+        setError('');
+
         try {
-            const data = await authService.login(email, password);
-            login(data.user, data.token);
+            await login(email, password);
             navigate('/patient/dashboard');
         } catch (err) {
-            setError(err.response?.data?.error || 'Login failed. Please check your credentials or test with Demo Mode.');
+            setError(err.response?.data?.error || 'Invalid email or password. Please verify credentials.');
         } finally {
             setLoading(false);
         }
@@ -32,89 +31,89 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50">
-            <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-slate-200 w-full max-w-md space-y-6">
-                <div className="text-center space-y-2">
-                    <div className="inline-flex p-3 rounded-2xl bg-blue-50 text-blue-600 text-3xl mb-1">
-                        🔐
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Welcome Back</h2>
-                    <p className="text-xs sm:text-sm text-slate-500">Sign in to your patient health portal</p>
+        <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded bg-[#1C355E] text-white font-bold text-xl shadow-xs">
+                    +
                 </div>
-
-                {/* 1-Click Demo Login Banner */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center space-y-2">
-                    <div className="text-xs font-bold text-blue-900">Want to test drive without registering?</div>
-                    <button
-                        type="button"
-                        onClick={handleDemoLogin}
-                        className="w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                        <span>⚡ 1-Click Instant Demo Login</span>
-                    </button>
-                </div>
-
-                {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2">
-                        <span>⚠️</span>
-                        <span>{error}</span>
-                    </div>
-                )}
-
-                <div className="relative flex py-1 items-center">
-                    <div className="flex-grow border-t border-slate-200"></div>
-                    <span className="flex-shrink mx-3 text-xs text-slate-400 font-semibold uppercase">Or Sign In</span>
-                    <div className="flex-grow border-t border-slate-200"></div>
-                </div>
-
-                <form onSubmit={handleLogin} className="space-y-4">
-                    <div>
-                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Email Address</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            placeholder="you@example.com"
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                            required
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`w-full py-3 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer ${
-                            loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                        }`}
-                    >
-                        {loading ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                <span>Authenticating...</span>
-                            </>
-                        ) : (
-                            <span>Sign In</span>
-                        )}
-                    </button>
-                </form>
-
-                <p className="text-center text-xs sm:text-sm text-slate-500">
-                    Don't have an account?{' '}
-                    <Link to="/register" className="text-blue-600 font-bold hover:underline">
-                        Register Free
-                    </Link>
+                <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                    Clinical Health Record Sign In
+                </h2>
+                <p className="text-xs text-slate-500">
+                    Enter your authenticated credentials or access the clinical demo
                 </p>
+            </div>
+
+            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+                <div className="bg-white py-8 px-6 sm:px-10 border border-slate-300 rounded shadow-xs space-y-6">
+                    {error && (
+                        <div className="bg-red-50 border-l-4 border-red-600 text-red-800 text-xs p-3 font-medium">
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                placeholder="patient@example.com"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full py-2.5 text-white font-semibold rounded text-sm transition cursor-pointer shadow-xs ${
+                                loading ? 'bg-slate-400' : 'bg-[#1C355E] hover:bg-[#15294A]'
+                            }`}
+                        >
+                            {loading ? 'Authenticating...' : 'Sign In'}
+                        </button>
+                    </form>
+
+                    <div className="relative border-t border-slate-200 pt-4">
+                        <div className="text-center">
+                            <span className="text-xs text-slate-500 font-medium">Or test drive instantly</span>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleDemoLogin}
+                            className="mt-3 w-full py-2 text-[#1C355E] bg-slate-50 hover:bg-slate-100 font-semibold rounded text-xs border border-slate-300 transition cursor-pointer"
+                        >
+                            Enter 1-Click Interactive Demo
+                        </button>
+                    </div>
+
+                    <div className="text-center pt-2 border-t border-slate-100">
+                        <p className="text-xs text-slate-600">
+                            Don't have a registered account?{' '}
+                            <Link to="/register" className="font-semibold text-[#026CB6] hover:underline">
+                                Register now
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -1,134 +1,147 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const { login, loginAsDemo } = useAuth();
+    const { register, loginAsDemo } = useAuth();
     const navigate = useNavigate();
 
-    const handleRegister = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+
         setLoading(true);
+
         try {
-            await authService.register(name, email, password);
-            // Automatically log in after registration
-            const loginData = await authService.login(email, password);
-            login(loginData.user, loginData.token);
-            navigate('/patient/dashboard');
+            await register(name, email, password);
+            navigate('/login');
         } catch (err) {
-            setError(err.response?.data?.error || 'Registration failed. Please try again or test with Demo Mode.');
+            setError(err.response?.data?.error || 'Registration failed. Email may already be in use.');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleDemoLogin = () => {
-        loginAsDemo();
-        navigate('/patient/dashboard');
-    };
-
     return (
-        <div className="min-h-[85vh] flex items-center justify-center px-4 py-12 bg-slate-50">
-            <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-xl border border-slate-200 w-full max-w-md space-y-6">
-                <div className="text-center space-y-2">
-                    <div className="inline-flex p-3 rounded-2xl bg-indigo-50 text-indigo-600 text-3xl mb-1">
-                        📝
-                    </div>
-                    <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Create Account</h2>
-                    <p className="text-xs sm:text-sm text-slate-500">Get started with your AI patient intelligence portal</p>
+        <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+            <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-2">
+                <div className="inline-flex items-center justify-center w-10 h-10 rounded bg-[#1C355E] text-white font-bold text-xl shadow-xs">
+                    +
                 </div>
-
-                {/* 1-Click Demo */}
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 text-center space-y-2">
-                    <div className="text-xs font-bold text-blue-900">Exploring the platform?</div>
-                    <button
-                        type="button"
-                        onClick={handleDemoLogin}
-                        className="w-full py-2.5 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-                    >
-                        <span>⚡ Launch 1-Click Interactive Demo</span>
-                    </button>
-                </div>
-
-                {error && (
-                    <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-xs sm:text-sm font-medium flex items-start gap-2">
-                        <span>⚠️</span>
-                        <span>{error}</span>
-                    </div>
-                )}
-
-                <div className="relative flex py-1 items-center">
-                    <div className="flex-grow border-t border-slate-200"></div>
-                    <span className="flex-shrink mx-3 text-xs text-slate-400 font-semibold uppercase">Or Register</span>
-                    <div className="flex-grow border-t border-slate-200"></div>
-                </div>
-
-                <form onSubmit={handleRegister} className="space-y-4">
-                    <div>
-                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Full Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            placeholder="Alex Morgan"
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Email Address</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            placeholder="you@example.com"
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label className="block text-slate-700 text-xs font-bold uppercase tracking-wider mb-1.5">Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={e => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                            required
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`w-full py-3 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer ${
-                            loading ? 'bg-slate-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'
-                        }`}
-                    >
-                        {loading ? (
-                            <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                <span>Creating Account...</span>
-                            </>
-                        ) : (
-                            <span>Create Account</span>
-                        )}
-                    </button>
-                </form>
-
-                <p className="text-center text-xs sm:text-sm text-slate-500">
-                    Already have an account?{' '}
-                    <Link to="/login" className="text-blue-600 font-bold hover:underline">
-                        Sign In
-                    </Link>
+                <h2 className="text-2xl font-bold tracking-tight text-[#0F172A]">
+                    Patient Portal Registration
+                </h2>
+                <p className="text-xs text-slate-500">
+                    Create your personal clinical health record account
                 </p>
+            </div>
+
+            <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
+                <div className="bg-white py-8 px-6 sm:px-10 border border-slate-300 rounded shadow-xs space-y-6">
+                    {error && (
+                        <div className="bg-red-50 border-l-4 border-red-600 text-red-800 text-xs p-3 font-medium">
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Full Name
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                placeholder="Dr. John Doe / Alex Morgan"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Email Address
+                            </label>
+                            <input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                placeholder="patient@example.com"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                Confirm Password
+                            </label>
+                            <input
+                                type="password"
+                                required
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                placeholder="••••••••"
+                            />
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className={`w-full py-2.5 text-white font-semibold rounded text-sm transition cursor-pointer shadow-xs ${
+                                loading ? 'bg-slate-400' : 'bg-[#1C355E] hover:bg-[#15294A]'
+                            }`}
+                        >
+                            {loading ? 'Creating Record...' : 'Complete Registration'}
+                        </button>
+                    </form>
+
+                    <div className="relative border-t border-slate-200 pt-4">
+                        <button
+                            type="button"
+                            onClick={() => { loginAsDemo(); navigate('/patient/dashboard'); }}
+                            className="w-full py-2 text-[#1C355E] bg-slate-50 hover:bg-slate-100 font-semibold rounded text-xs border border-slate-300 transition cursor-pointer"
+                        >
+                            Enter 1-Click Interactive Demo
+                        </button>
+                    </div>
+
+                    <div className="text-center pt-2 border-t border-slate-100">
+                        <p className="text-xs text-slate-600">
+                            Already registered?{' '}
+                            <Link to="/login" className="font-semibold text-[#026CB6] hover:underline">
+                                Sign in
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
