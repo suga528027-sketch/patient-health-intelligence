@@ -56,14 +56,14 @@ const Register = () => {
                             </div>
                         </div>
 
-                        {/* Quote 2 */}
+                        {/* Quote 2: Sir William Osler */}
                         <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
                             <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
                             <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
-                                The greatest wealth is health.
+                                The good physician treats the disease; the great physician treats the patient who has the disease.
                             </p>
                             <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
-                                — Virgil
+                                — Sir William Osler
                             </div>
                         </div>
 
@@ -110,7 +110,7 @@ const Register = () => {
                                 required
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                 placeholder="Alex Morgan"
                             />
                         </div>
@@ -124,7 +124,7 @@ const Register = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                 placeholder="patient@example.com"
                             />
                         </div>
@@ -139,7 +139,7 @@ const Register = () => {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -152,7 +152,7 @@ const Register = () => {
                                     required
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                     placeholder="••••••••"
                                 />
                             </div>

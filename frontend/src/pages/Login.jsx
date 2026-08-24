@@ -53,14 +53,14 @@ const Login = () => {
                             </div>
                         </div>
 
-                        {/* Quote 2 */}
+                        {/* Quote 2: Health is Wealth */}
                         <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
                             <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
                             <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
-                                The good physician treats the disease; the great physician treats the patient who has the disease.
+                                The greatest wealth is health.
                             </p>
                             <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
-                                — Sir William Osler
+                                — Virgil, Classical Philosophy
                             </div>
                         </div>
 
