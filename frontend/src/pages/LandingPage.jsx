@@ -141,7 +141,11 @@ const LandingPage = () => {
                         <span className="font-bold text-white">Cura Clinical Intelligence System</span>
                     </div>
                     <div className="text-slate-400 text-center sm:text-right">
-                        Standards-compliant clinical information architecture • For demonstration & educational use
+                        <span>Portal: </span>
+                        <a href="https://trycura.vercel.app/" className="text-blue-300 hover:text-white font-medium underline">
+                            trycura.vercel.app
+                        </a>
+                        <span> • Standards-compliant clinical information architecture</span>
                     </div>
                 </div>
             </footer>

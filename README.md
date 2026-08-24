@@ -2,7 +2,7 @@
 
 An intelligent, full-stack medical AI assistant that ingests patient clinical reports (PDFs), performs semantic retrieval-augmented generation (RAG) using **Google Gemini 2.5 Flash** and **Qdrant Vector Database**, automatically calculates longitudinal biomarker shifts over time, and provides plain-English layman explanations.
 
-[![Live Demo](https://img.shields.io/badge/Demo-patient--health--intelligence.vercel.app-blue?style=for-the-badge&logo=vercel)](https://patient-health-intelligence.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Demo-trycura.vercel.app-blue?style=for-the-badge&logo=vercel)](https://trycura.vercel.app/)
 [![Backend](https://img.shields.io/badge/Backend-Spring%20Boot%203.2-brightgreen?style=for-the-badge&logo=spring)](https://spring.io/)
 [![Frontend](https://img.shields.io/badge/Frontend-React%2019%20+%20TailwindCSS-cyan?style=for-the-badge&logo=react)](https://react.dev/)
 [![AI Engine](https://img.shields.io/badge/AI%20Model-Gemini%202.5%20Flash-orange?style=for-the-badge&logo=google)](https://ai.google.dev/)
@@ -120,7 +120,7 @@ mvn spring-boot:run
 
 ## 🌐 Live Vercel Deployment & Interactive Demo Mode
 
-The frontend is live at **[https://patient-health-intelligence.vercel.app/](https://patient-health-intelligence.vercel.app/)**.
+The frontend is live at **[https://trycura.vercel.app/](https://trycura.vercel.app/)**.
 
 - **Dual-Mode System**: When deployed without a local backend running, the application seamlessly activates an **Interactive Demo Mode** preloaded with realistic January & February 2026 clinical reports, allowing full test drives of all features (upload simulations, Gemini summaries, RAG chat, trends, and comparisons).
 - **Connecting to a Cloud Backend**: Set the `VITE_API_URL` environment variable on Vercel to your deployed Spring Boot endpoint (e.g. `https://your-backend.railway.app/api` or `https://your-backend.onrender.com/api`).
