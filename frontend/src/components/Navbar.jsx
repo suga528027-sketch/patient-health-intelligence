@@ -23,18 +23,18 @@ const Navbar = () => {
         <header className="bg-[#1C355E] text-white shadow-sm sticky top-0 z-40 border-b border-[#15294a]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    {/* Brand Logo & Institutional Title */}
+                    {/* Brand Logo & Title: Cura */}
                     <div className="flex items-center gap-4">
-                        <Link to="/" className="flex items-center gap-3 group">
+                        <Link to="/" className="flex items-center gap-2.5 group">
                             <div className="w-8 h-8 rounded bg-white text-[#1C355E] flex items-center justify-center font-bold text-lg shadow-sm">
                                 +
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-bold text-lg sm:text-xl tracking-tight text-white leading-tight">
-                                    HealthPlatform
+                                <span className="font-bold text-xl tracking-tight text-white leading-tight">
+                                    Cura
                                 </span>
                                 <span className="text-[10px] text-slate-300 tracking-wider uppercase font-semibold">
-                                    Clinical Intelligence System
+                                    Clinical Intelligence
                                 </span>
                             </div>
                         </Link>

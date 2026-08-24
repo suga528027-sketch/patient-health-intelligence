@@ -15,7 +15,7 @@ const LandingPage = () => {
                             <span>Clinical Artificial Intelligence & Diagnostics System</span>
                         </div>
                         <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
-                            Patient Health Intelligence & Clinical Records System
+                            Cura — Patient Health Intelligence & Clinical Records System
                         </h1>
                         <p className="text-base sm:text-lg text-slate-200 leading-relaxed">
                             A standards-compliant clinical platform that ingests unstructured medical reports (PDF), performs automated optical extraction, provides plain-language interpretations, and tracks longitudinal biomarker trajectories.
@@ -138,7 +138,7 @@ const LandingPage = () => {
                 <div className="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-2">
                         <div className="w-5 h-5 bg-white text-[#1C355E] font-bold flex items-center justify-center rounded text-xs">+</div>
-                        <span className="font-bold text-white">HealthPlatform Clinical Intelligence System</span>
+                        <span className="font-bold text-white">Cura Clinical Intelligence System</span>
                     </div>
                     <div className="text-slate-400 text-center sm:text-right">
                         Standards-compliant clinical information architecture • For demonstration & educational use
