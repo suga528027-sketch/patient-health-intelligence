@@ -38,8 +38,8 @@ public class LabParameterExtractionService {
 
         int count = 0;
 
-        // 1. Blood Pressure: e.g. "BP 120/80", "Blood Pressure: 130/85 mmHg", "140/90 mmHg"
-        Pattern bpPattern = Pattern.compile("(?i)(?:bp|blood\\s+pressure)[:\\s]*(\\d{2,3})/(\\d{2,3})\\s*(?:mmhg)?");
+        // 1. Blood Pressure: e.g. "BP 120/80", "BP: 120 / 80 mmHg", "Blood Pressure: 130/85 mmHg", "140/90 mmHg"
+        Pattern bpPattern = Pattern.compile("(?i)(?:bp|blood\\s+pressure)[:\\s]*(\\d{2,3})\\s*/\\s*(\\d{2,3})\\s*(?:mmhg)?");
         Matcher bpMatcher = bpPattern.matcher(reportText);
         if (bpMatcher.find()) {
             double systolic = Double.parseDouble(bpMatcher.group(1));
@@ -49,8 +49,8 @@ public class LabParameterExtractionService {
             saveParameter(patient, report, ParameterName.BP_DIASTOLIC, diastolic, "mmHg", "60-80", testDate);
             count += 2;
         } else {
-            // Backup pattern for standalone numbers like "120/80 mmHg" or "120/80"
-            Pattern bpBackupPattern = Pattern.compile("(\\d{2,3})/(\\d{2,3})\\s*mmhg");
+            // Backup pattern for standalone numbers like "120/80 mmHg" or "120 / 80"
+            Pattern bpBackupPattern = Pattern.compile("(\\d{2,3})\\s*/\\s*(\\d{2,3})\\s*mmhg");
             Matcher bpBackupMatcher = bpBackupPattern.matcher(reportText);
             if (bpBackupMatcher.find()) {
                 double systolic = Double.parseDouble(bpBackupMatcher.group(1));
@@ -63,7 +63,7 @@ public class LabParameterExtractionService {
         }
 
         // 2. Fasting Glucose: e.g. "Fasting Glucose: 110 mg/dL", "FBS = 98", "Fasting Blood Sugar: 105 mg/dl"
-        Pattern glucosePattern = Pattern.compile("(?i)(?:fasting\\s+glucose|fbs|fasting\\s+blood\\s+sugar)\\s*[:=]?\\s*(\\d{2,3})\\s*(?:mg/dl)?");
+        Pattern glucosePattern = Pattern.compile("(?i)(?:fasting\\s+(?:blood\\s+)?(?:glucose|sugar)|fbs)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:mg/dl|mg%)?");
         Matcher glucoseMatcher = glucosePattern.matcher(reportText);
         if (glucoseMatcher.find()) {
             double value = Double.parseDouble(glucoseMatcher.group(1));
@@ -72,7 +72,7 @@ public class LabParameterExtractionService {
         }
 
         // 3. HbA1c: e.g. "HbA1c: 6.8%", "HbA1c = 5.7"
-        Pattern hba1cPattern = Pattern.compile("(?i)hba1c\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*%?");
+        Pattern hba1cPattern = Pattern.compile("(?i)(?:hba1c|glycated\\s+hemoglobin)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*%?");
         Matcher hba1cMatcher = hba1cPattern.matcher(reportText);
         if (hba1cMatcher.find()) {
             double value = Double.parseDouble(hba1cMatcher.group(1));
@@ -81,7 +81,7 @@ public class LabParameterExtractionService {
         }
 
         // 4. Hemoglobin: e.g. "Hemoglobin: 13.2 g/dL", "Hb = 11.5", "Hemoglobin 14.5 g/dl"
-        Pattern hbPattern = Pattern.compile("(?i)(?:hemoglobin|hb)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:g/dl)?");
+        Pattern hbPattern = Pattern.compile("(?i)(?:hemoglobin|hb)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:g/dl|gm/dl)?");
         Matcher hbMatcher = hbPattern.matcher(reportText);
         if (hbMatcher.find()) {
             double value = Double.parseDouble(hbMatcher.group(1));
@@ -90,7 +90,7 @@ public class LabParameterExtractionService {
         }
 
         // 5. Cholesterol Total: e.g. "Cholesterol: 210 mg/dL", "Total Cholesterol = 185"
-        Pattern cholPattern = Pattern.compile("(?i)(?:total\\s+cholesterol|cholesterol)\\s*[:=]?\\s*(\\d{2,3})\\s*(?:mg/dl)?");
+        Pattern cholPattern = Pattern.compile("(?i)(?:total\\s+cholesterol|serum\\s+cholesterol|cholesterol)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:mg/dl)?");
         Matcher cholMatcher = cholPattern.matcher(reportText);
         if (cholMatcher.find()) {
             double value = Double.parseDouble(cholMatcher.group(1));
@@ -99,7 +99,7 @@ public class LabParameterExtractionService {
         }
 
         // 6. LDL: e.g. "LDL: 130 mg/dL", "LDL-C = 110"
-        Pattern ldlPattern = Pattern.compile("(?i)(?:ldl|ldl-c|ldl\\s+cholesterol)\\s*[:=]?\\s*(\\d{2,3})\\s*(?:mg/dl)?");
+        Pattern ldlPattern = Pattern.compile("(?i)(?:ldl|ldl-c|ldl\\s+cholesterol)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:mg/dl)?");
         Matcher ldlMatcher = ldlPattern.matcher(reportText);
         if (ldlMatcher.find()) {
             double value = Double.parseDouble(ldlMatcher.group(1));
@@ -108,7 +108,7 @@ public class LabParameterExtractionService {
         }
 
         // 7. HDL: e.g. "HDL: 45 mg/dL", "HDL-C = 50"
-        Pattern hdlPattern = Pattern.compile("(?i)(?:hdl|hdl-c|hdl\\s+cholesterol)\\s*[:=]?\\s*(\\d{2,3})\\s*(?:mg/dl)?");
+        Pattern hdlPattern = Pattern.compile("(?i)(?:hdl|hdl-c|hdl\\s+cholesterol)\\s*[:=]?\\s*(\\d+(?:\\.\\d+)?)\\s*(?:mg/dl)?");
         Matcher hdlMatcher = hdlPattern.matcher(reportText);
         if (hdlMatcher.find()) {
             double value = Double.parseDouble(hdlMatcher.group(1));

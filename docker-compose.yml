@@ -18,6 +18,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      network: host
     container_name: healthplatform-backend
     ports:
       - "8080:8080"
@@ -48,6 +49,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      network: host
     container_name: healthplatform-frontend
     ports:
       - "5173:80"

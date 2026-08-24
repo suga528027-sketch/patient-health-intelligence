@@ -28,17 +28,21 @@ const ComparisonSection = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center space-x-2 py-4 text-gray-500">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-indigo-600"></div>
-                <span className="text-sm font-medium">Checking comparison with last report...</span>
+            <div className="flex items-center space-x-2 py-4 text-slate-500">
+                <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-xs font-semibold">Comparing against prior baseline report...</span>
             </div>
         );
     }
 
     if (errorMsg) {
         return (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-700 mt-6">
-                ℹ️ No previous report to compare with yet. Upload another report later to see trends.
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-xs sm:text-sm text-blue-800 flex items-start gap-2.5">
+                <span className="text-base">ℹ️</span>
+                <div>
+                    <div className="font-bold">Longitudinal Comparison Notice</div>
+                    <div className="mt-0.5">{errorMsg}</div>
+                </div>
             </div>
         );
     }
@@ -47,67 +51,102 @@ const ComparisonSection = () => {
         return null;
     }
 
-    // A helper to format parameters nicely for humans
     const formatName = (name) => {
         if (name === "BP_SYSTOLIC") return "Systolic Blood Pressure";
         if (name === "BP_DIASTOLIC") return "Diastolic Blood Pressure";
-        if (name === "GLUCOSE_FASTING") return "Fasting Glucose";
-        if (name === "HBA1C") return "HbA1c";
+        if (name === "GLUCOSE_FASTING") return "Fasting Blood Glucose";
+        if (name === "HBA1C") return "HbA1c (3-Month Glucose)";
         if (name === "HEMOGLOBIN") return "Hemoglobin";
         if (name === "CHOLESTEROL_TOTAL") return "Total Cholesterol";
-        if (name === "LDL") return "LDL Cholesterol";
-        if (name === "HDL") return "HDL Cholesterol";
-        if (name === "CREATININE") return "Creatinine";
-        return name.replace('_', ' ');
+        if (name === "LDL") return "LDL ('Bad') Cholesterol";
+        if (name === "HDL") return "HDL ('Good') Cholesterol";
+        if (name === "CREATININE") return "Serum Creatinine (Kidney)";
+        return name.replace(/_/g, ' ');
     };
 
-    // Color code indicator.
-    // Blood pressure, glucose, cholesterol, LDL, creatinine are better when LOWER (decreased is green, increased is red).
-    // Hemoglobin, HDL are better when HIGHER or stable (decreased is red, increased is green).
-    const getColorClass = (paramName, trend, diff) => {
+    const getStatusTheme = (paramName, trend, diff) => {
         const lowerIsBetter = ["BP_SYSTOLIC", "BP_DIASTOLIC", "GLUCOSE_FASTING", "CHOLESTEROL_TOTAL", "LDL", "CREATININE", "HBA1C"].includes(paramName);
-        
+
         if (trend === "STABLE") {
-            return "text-green-600 bg-green-50 border-green-200";
+            return {
+                bg: "bg-emerald-50/70 border-emerald-200 text-emerald-900",
+                badge: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                icon: "🟢 Stable"
+            };
         }
         if (trend === "INCREASED") {
-            return lowerIsBetter ? "text-red-600 bg-red-50 border-red-200" : "text-green-600 bg-green-50 border-green-200";
+            return lowerIsBetter ? {
+                bg: "bg-amber-50/80 border-amber-300 text-amber-950",
+                badge: "bg-amber-100 text-amber-900 border-amber-400",
+                icon: "⚠️ Elevated"
+            } : {
+                bg: "bg-emerald-50/70 border-emerald-200 text-emerald-900",
+                badge: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                icon: "✅ Improved"
+            };
         }
         if (trend === "DECREASED") {
-            return lowerIsBetter ? "text-green-600 bg-green-50 border-green-200" : "text-red-600 bg-red-50 border-red-200";
+            return lowerIsBetter ? {
+                bg: "bg-emerald-50/70 border-emerald-200 text-emerald-900",
+                badge: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                icon: "✅ Improved"
+            } : {
+                bg: "bg-amber-50/80 border-amber-300 text-amber-950",
+                badge: "bg-amber-100 text-amber-900 border-amber-400",
+                icon: "⚠️ Decreased"
+            };
         }
-        return "text-gray-600 bg-gray-50 border-gray-200";
+        return {
+            bg: "bg-slate-50 border-slate-200 text-slate-800",
+            badge: "bg-slate-100 text-slate-700 border-slate-300",
+            icon: "ℹ️ Monitored"
+        };
     };
 
     return (
-        <div className="mt-8 border-t pt-6">
-            <h4 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                📊 Comparison with your previous report
-            </h4>
-            <div className="space-y-4">
+        <div className="border-t border-slate-200 pt-6 space-y-4">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h4 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                        <span>📊</span> Longitudinal Biomarker Comparison
+                    </h4>
+                    <p className="text-xs text-slate-500">Automated shift analysis vs. your previous test</p>
+                </div>
+                <span className="text-[11px] bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-full font-bold">
+                    {comparison.comparisons.length} Overlapping Biomarkers
+                </span>
+            </div>
+
+            <div className="space-y-3">
                 {comparison.comparisons.map((c, index) => {
-                    const colorClasses = getColorClass(c.parameterName, c.trend, c.difference);
-                    
+                    const theme = getStatusTheme(c.parameterName, c.trend, c.difference);
+
                     return (
-                        <div key={index} className={`p-4 border rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 ${colorClasses}`}>
-                            <div className="flex-1">
-                                <div className="font-bold text-gray-800 flex items-center gap-2 text-sm md:text-base">
-                                    {formatName(c.parameterName)}
-                                    <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full border bg-white shadow-sm">
-                                        {c.trend}
+                        <div
+                            key={index}
+                            className={`p-4 border rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm transition ${theme.bg}`}
+                        >
+                            <div className="flex-1 space-y-1">
+                                <div className="font-extrabold text-slate-900 flex items-center gap-2 text-sm">
+                                    <span>{formatName(c.parameterName)}</span>
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${theme.badge}`}>
+                                        {theme.icon}
                                     </span>
                                 </div>
-                                <div className="text-xs text-gray-500 mt-1">
-                                    Current: <span className="font-semibold text-gray-700">{c.currentValue} {c.unit}</span> | 
-                                    Previous: <span className="font-semibold text-gray-700">{c.previousValue} {c.unit}</span>
+                                <div className="text-xs text-slate-600 font-medium">
+                                    Current: <strong className="text-slate-900">{c.currentValue} {c.unit}</strong> |{' '}
+                                    Previous: <strong className="text-slate-900">{c.previousValue} {c.unit}</strong>
                                 </div>
-                                <p className="text-sm font-medium text-gray-700 mt-2">
+                                <p className="text-xs text-slate-700 leading-relaxed font-normal pt-1">
                                     💡 {c.interpretation}
                                 </p>
                             </div>
-                            <div className="text-right font-bold text-lg whitespace-nowrap self-start md:self-center text-gray-800">
-                                {c.difference > 0 ? `+${c.difference.toFixed(1)}` : c.difference.toFixed(1)} {c.unit}
-                                <div className="text-xs font-medium text-gray-400">
+
+                            <div className="text-left sm:text-right font-black text-base whitespace-nowrap self-start sm:self-center border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto">
+                                <div className={`${c.difference > 0 ? 'text-amber-700' : 'text-emerald-700'}`}>
+                                    {c.difference > 0 ? `+${c.difference.toFixed(1)}` : c.difference.toFixed(1)} {c.unit}
+                                </div>
+                                <div className="text-[11px] font-semibold text-slate-500">
                                     ({c.percentChange > 0 ? `+${c.percentChange.toFixed(1)}` : c.percentChange.toFixed(1)}%)
                                 </div>
                             </div>
