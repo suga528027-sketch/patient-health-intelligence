@@ -30,15 +30,15 @@ const ComparisonSection = () => {
         return (
             <div className="flex items-center space-x-2 py-4 text-slate-600">
                 <div className="w-4 h-4 border-2 border-[#1C355E] border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-xs font-medium">Evaluating longitudinal baseline comparisons...</span>
+                <span className="text-sm font-medium">Evaluating longitudinal baseline comparisons...</span>
             </div>
         );
     }
 
     if (errorMsg) {
         return (
-            <div className="bg-slate-50 border border-slate-300 rounded p-4 text-xs sm:text-sm text-slate-700">
-                <div className="font-bold text-[#0F172A]">Longitudinal Baseline Notice</div>
+            <div className="bg-slate-50 border border-slate-300 rounded p-4 text-sm text-slate-700">
+                <div className="font-bold text-[#0F172A] text-base">Longitudinal Baseline Notice</div>
                 <div className="mt-0.5 text-slate-600">{errorMsg}</div>
             </div>
         );
@@ -104,17 +104,17 @@ const ComparisonSection = () => {
         <div className="border-t border-slate-200 pt-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                 <div>
-                    <h4 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
+                    <h4 className="text-base font-bold text-[#0F172A] uppercase tracking-wider">
                         Longitudinal Biomarker Comparison (Consecutive Panels)
                     </h4>
-                    <p className="text-xs text-slate-500">Quantitative differential against prior lab baseline</p>
+                    <p className="text-xs sm:text-sm text-slate-500">Quantitative differential against prior lab baseline</p>
                 </div>
-                <span className="text-[11px] bg-slate-100 text-slate-800 border border-slate-300 px-2.5 py-0.5 rounded font-semibold">
+                <span className="text-xs bg-slate-100 text-slate-800 border border-slate-300 px-3 py-1 rounded font-semibold">
                     {comparison.comparisons.length} Overlapping Biomarkers
                 </span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-3.5">
                 {comparison.comparisons.map((c, index) => {
                     const theme = getStatusTheme(c.parameterName, c.trend);
 
@@ -124,26 +124,26 @@ const ComparisonSection = () => {
                             className={`p-4 rounded border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs ${theme.border}`}
                         >
                             <div className="flex-1 space-y-1">
-                                <div className="font-bold text-[#0F172A] flex items-center gap-2 text-sm">
+                                <div className="font-bold text-[#0F172A] flex items-center gap-2 text-base">
                                     <span>{formatName(c.parameterName)}</span>
-                                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${theme.badge}`}>
+                                    <span className={`text-xs font-semibold px-2.5 py-0.5 rounded border ${theme.badge}`}>
                                         {theme.label}
                                     </span>
                                 </div>
-                                <div className="text-xs text-slate-600">
+                                <div className="text-sm text-slate-600">
                                     Current: <strong className="text-slate-900">{c.currentValue} {c.unit}</strong> |{' '}
                                     Previous: <strong className="text-slate-900">{c.previousValue} {c.unit}</strong>
                                 </div>
-                                <p className="text-xs text-slate-700 leading-relaxed pt-1">
+                                <p className="text-sm text-slate-700 leading-relaxed pt-1">
                                     {c.interpretation}
                                 </p>
                             </div>
 
-                            <div className="text-left sm:text-right font-bold text-base whitespace-nowrap self-start sm:self-center border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto">
+                            <div className="text-left sm:text-right font-bold text-lg whitespace-nowrap self-start sm:self-center border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto">
                                 <div className={`${c.difference > 0 ? 'text-amber-800' : 'text-emerald-800'}`}>
                                     {c.difference > 0 ? `+${c.difference.toFixed(1)}` : c.difference.toFixed(1)} {c.unit}
                                 </div>
-                                <div className="text-[11px] font-normal text-slate-500">
+                                <div className="text-xs font-normal text-slate-500">
                                     ({c.percentChange > 0 ? `+${c.percentChange.toFixed(1)}` : c.percentChange.toFixed(1)}%)
                                 </div>
                             </div>
