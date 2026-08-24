@@ -41,55 +41,42 @@ const Register = () => {
             }}
         >
             {/* Centered Main Split Card */}
-            <div className="relative z-10 max-w-4xl w-full grid md:grid-cols-12 rounded-xl overflow-hidden shadow-2xl border border-white/30 backdrop-blur-md">
-                {/* Left Panel: Deep Navy Medical Principles */}
-                <div className="md:col-span-5 bg-[#1C355E]/95 text-white p-8 sm:p-9 flex flex-col justify-between space-y-6 relative border-r border-white/10">
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-white text-[#1C355E] flex items-center justify-center font-bold text-lg shadow-sm">
-                                +
-                            </div>
-                            <div>
-                                <span className="font-bold text-xs tracking-wider uppercase text-slate-200 block leading-tight">
-                                    Patient Portal
-                                </span>
-                                <span className="text-[10px] text-slate-300">
-                                    Account Creation
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="pt-1">
-                            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug">
-                                Unified Longitudinal Health Dossier
-                            </h2>
-                            <p className="text-xs text-slate-200 mt-1 leading-relaxed">
-                                Connect laboratory reports, imaging scans, and pathology evaluations in one place.
+            <div className="relative z-10 max-w-4xl w-full grid md:grid-cols-12 rounded-2xl overflow-hidden shadow-2xl border border-white/30 backdrop-blur-md">
+                {/* Left Panel: Dedicated Medical Quotes */}
+                <div className="md:col-span-5 bg-[#1C355E]/95 text-white p-8 sm:p-10 flex flex-col justify-center space-y-6 relative border-r border-white/10">
+                    <div className="space-y-6 my-auto">
+                        {/* Quote 1 */}
+                        <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
+                            <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
+                            <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
+                                Health is a state of complete physical, mental, and social well-being and not merely the absence of disease.
                             </p>
-                        </div>
-                    </div>
-
-                    {/* Medical Quote Card */}
-                    <div className="space-y-3.5 border-y border-white/15 py-4">
-                        <div className="bg-white/10 p-4 rounded border border-white/10 space-y-1.5">
-                            <p className="text-xs italic text-slate-100 leading-relaxed">
-                                "Health is a state of complete physical, mental, and social well-being and not merely the absence of disease."
-                            </p>
-                            <div className="text-[11px] text-blue-200 font-semibold pt-0.5">
+                            <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
                                 — World Health Organization (WHO)
                             </div>
                         </div>
-                    </div>
 
-                    {/* Privacy notice */}
-                    <div className="text-xs text-slate-300 space-y-1">
-                        <div className="font-semibold text-white flex items-center gap-1.5">
-                            <span>🛡️</span>
-                            <span>Patient Data Protection</span>
+                        {/* Quote 2 */}
+                        <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
+                            <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
+                            <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
+                                The greatest wealth is health.
+                            </p>
+                            <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
+                                — Virgil
+                            </div>
                         </div>
-                        <p className="text-[11px] text-slate-300 leading-relaxed">
-                            Encrypted 256-bit authentication and strict patient-isolated clinical indexing.
-                        </p>
+
+                        {/* Quote 3 */}
+                        <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
+                            <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
+                            <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
+                                Healing is a matter of time, but it is sometimes also a matter of opportunity.
+                            </p>
+                            <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
+                                — Hippocrates
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -115,7 +102,7 @@ const Register = () => {
 
                     <form className="space-y-3.5" onSubmit={handleSubmit}>
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                 Full Name
                             </label>
                             <input
@@ -123,13 +110,13 @@ const Register = () => {
                                 required
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                 placeholder="Alex Morgan"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                 Email Address
                             </label>
                             <input
@@ -137,14 +124,14 @@ const Register = () => {
                                 required
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                 placeholder="patient@example.com"
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
                             <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Password
                                 </label>
                                 <input
@@ -152,12 +139,12 @@ const Register = () => {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                    className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                     placeholder="••••••••"
                                 />
                             </div>
                             <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                                     Confirm
                                 </label>
                                 <input
@@ -165,7 +152,7 @@ const Register = () => {
                                     required
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="w-full border border-slate-300 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
+                                    className="w-full border border-slate-300 rounded px-3.5 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#1C355E] focus:border-[#1C355E]"
                                     placeholder="••••••••"
                                 />
                             </div>

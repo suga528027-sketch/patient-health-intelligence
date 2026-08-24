@@ -38,64 +38,41 @@ const Login = () => {
             }}
         >
             {/* Centered Main Split Card */}
-            <div className="relative z-10 max-w-4xl w-full grid md:grid-cols-12 rounded-xl overflow-hidden shadow-2xl border border-white/30 backdrop-blur-md">
-                {/* Left Panel: Deep Navy Medical Quotes & Philosophy */}
-                <div className="md:col-span-5 bg-[#1C355E]/95 text-white p-8 sm:p-9 flex flex-col justify-between space-y-6 relative border-r border-white/10">
-                    <div className="space-y-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded bg-white text-[#1C355E] flex items-center justify-center font-bold text-lg shadow-sm">
-                                +
-                            </div>
-                            <div>
-                                <span className="font-bold text-xs tracking-wider uppercase text-slate-200 block leading-tight">
-                                    Clinical Intelligence
-                                </span>
-                                <span className="text-[10px] text-slate-300">
-                                    Hospital & Diagnostic System
-                                </span>
-                            </div>
-                        </div>
-
-                        <div className="pt-1">
-                            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-snug">
-                                Empowering Longitudinal Patient Care
-                            </h2>
-                            <p className="text-xs text-slate-200 mt-1 leading-relaxed">
-                                Continuous health monitoring transforms reactive treatment into proactive wellness.
+            <div className="relative z-10 max-w-4xl w-full grid md:grid-cols-12 rounded-2xl overflow-hidden shadow-2xl border border-white/30 backdrop-blur-md">
+                {/* Left Panel: Dedicated Medical Quotes */}
+                <div className="md:col-span-5 bg-[#1C355E]/95 text-white p-8 sm:p-10 flex flex-col justify-center space-y-6 relative border-r border-white/10">
+                    <div className="space-y-6 my-auto">
+                        {/* Quote 1 */}
+                        <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
+                            <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
+                            <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
+                                The greatest medicine of all is teaching people how not to need it.
                             </p>
-                        </div>
-                    </div>
-
-                    {/* Medical Quotes */}
-                    <div className="space-y-3.5 border-y border-white/15 py-4">
-                        <div className="bg-white/10 p-3.5 rounded border border-white/10 space-y-1">
-                            <p className="text-xs italic text-slate-100 leading-relaxed">
-                                "The greatest medicine of all is teaching people how not to need it."
-                            </p>
-                            <div className="text-[11px] text-blue-200 font-semibold pt-0.5">
+                            <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
                                 — Hippocrates, Father of Medicine
                             </div>
                         </div>
 
-                        <div className="bg-white/10 p-3.5 rounded border border-white/10 space-y-1">
-                            <p className="text-xs italic text-slate-100 leading-relaxed">
-                                "The good physician treats the disease; the great physician treats the patient who has the disease."
+                        {/* Quote 2 */}
+                        <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
+                            <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
+                            <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
+                                The good physician treats the disease; the great physician treats the patient who has the disease.
                             </p>
-                            <div className="text-[11px] text-blue-200 font-semibold pt-0.5">
+                            <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
                                 — Sir William Osler
                             </div>
                         </div>
-                    </div>
 
-                    {/* Clinical Feature Tags */}
-                    <div className="space-y-1.5 text-xs text-slate-300">
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                            <span>Automated Optical Diagnostic Extraction</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-blue-300"></span>
-                            <span>Longitudinal Baseline Delta Tracking</span>
+                        {/* Quote 3 */}
+                        <div className="bg-white/10 backdrop-blur-sm p-5 rounded-xl border border-white/15 shadow-sm space-y-2.5">
+                            <div className="text-2xl text-blue-300 font-serif leading-none">“</div>
+                            <p className="text-sm sm:text-base italic text-slate-100 leading-relaxed font-light">
+                                Wherever the art of medicine is loved, there is also a love of humanity.
+                            </p>
+                            <div className="text-xs text-blue-200 font-semibold pt-1 border-t border-white/10">
+                                — Hippocrates
+                            </div>
                         </div>
                     </div>
                 </div>
